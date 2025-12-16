@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrenamiento HIAS</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      background: #f3f4f6;
+      padding: 20px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 960px;
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 24px 24px 32px;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 8px;
+      font-size: 1.6rem;
+      color: #111827;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+
+    .section-title {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #111827;
+      font-size: 0.95rem;
+    }
+
+    .selection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      padding: 8px 12px;
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #f9fafb;
+      transition: all 0.15s ease;
+    }
+
+    .pill span.badge {
+      font-size: 0.9rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .pill input {
+      display: none;
+    }
+
+    .pill.selected {
+      border-color: #2563eb;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .pill.selected span.badge {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      gap: 8px;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+
+    .btn-primary:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.45);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: default;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      background: white;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: #374151;
+      transition: background 0.1s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #f3f4f6;
+    }
+
+    .selection-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 0.8rem;
+    }
+
+    .chip small {
+      font-size: 0.7rem;
+      color: #6b7280;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #e5e7eb;
+      margin: 18px 0;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .quiz-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      font-size: 0.8rem;
+      color: #4b5563;
+    }
+
+    .quiz-meta span {
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #f3f4f6;
+    }
+
+    .question-card {
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      padding: 14px 16px 18px;
+      background: #f9fafb;
+      margin-bottom: 14px;
+    }
+
+    .question-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 1rem;
+      color: #111827;
+      flex: 1;
+    }
+
+    .timer {
+      font-size: 0.9rem;
+      font-weight: 600;
+      min-width: 90px;
+      text-align: right;
+      color: #16a34a;
+    }
+
+    .timer.low {
+      color: #dc2626;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .answer-btn {
+      width: 100%;
+      text-align: left;
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      background: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.1s ease, border-color 0.1s ease, transform 0.08s ease;
+    }
+
+    .answer-btn:hover {
+      background: #f3f4f6;
+      transform: translateY(-1px);
+    }
+
+    .answer-btn.correct {
+      border-color: #16a34a;
+      background: #ecfdf3;
+      color: #166534;
+    }
+
+    .answer-btn.incorrect {
+      border-color: #dc2626;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .answer-btn.disabled {
+      pointer-events: none;
+      opacity: 0.9;
+      transform: none;
+    }
+
+    .feedback {
+      min-height: 22px;
+      font-size: 0.9rem;
+      margin: 6px 0 10px;
+    }
+
+    .feedback.correct {
+      color: #166534;
+    }
+
+    .feedback.incorrect {
+      color: #991b1b;
+    }
+
+    .quiz-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .progress-text {
+      font-size: 0.85rem;
+      color: #4b5563;
+    }
+
+    .score-text {
+      font-size: 0.85rem;
+      color: #111827;
+      font-weight: 500;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .result-card {
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+      padding: 16px 18px 20px;
+      background: #f9fafb;
+      margin-top: 12px;
+    }
+
+    .result-main {
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .result-detail {
+      font-size: 0.9rem;
+      color: #4b5563;
+      margin-bottom: 6px;
+    }
+
+    .result-tag {
+      display: inline-flex;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+
+    .result-tag.good {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .result-tag.mid {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+
+    .result-tag.low {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        padding: 18px 14px 24px;
+      }
+
+      h1 {
+        font-size: 1.35rem;
+      }
+
+      .selection-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .question-top-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .timer {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <h1>Entrenamiento HIAS</h1>
+  <div class="subtitle">
+    Adivinanzas (Ad). Analogías verbales (An).<br>
+    Categorías (Ca). Figuras incompletas (Fi).<br>
+    Memoria verbal (Mv). Memoria no verbal (Mnv).<br><br>
+    20 segundos por pregunta. Al terminar una edad, el bloque continúa con las siguientes.
+  </div>
+
+  <!-- Selección inicial -->
+  <div id="selection-screen">
+    <div class="selection-row">
+      <div>
+        <div class="section-title">1. Selecciona tu rango de edad</div>
+      </div>
+    </div>
+    <div class="selection-grid" id="age-range-container"></div>
+
+    <hr>
+
+    <div class="selection-row">
+      <div>
+        <div class="section-title">2. Selecciona el bloque</div>
+      </div>
+      <div class="chip">
+        Bloques HIAS simplificados
+        <small>(Ad, An, Ca, Fi, Mv, Mnv)</small>
+      </div>
+    </div>
+    <div class="selection-grid" id="block-container"></div>
+
+    <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+      <button id="start-btn" class="btn-primary" disabled>
+        Empezar bloque
+      </button>
+    </div>
+  </div>
+
+  <!-- Pantalla de quiz -->
+  <div id="quiz-screen" class="hidden">
+    <div class="quiz-header">
+      <div class="quiz-meta">
+        <span id="meta-age"></span>
+        <span id="meta-block"></span>
+      </div>
+      <button id="change-selection-btn" class="btn-secondary">Cambiar edad/bloque</button>
+    </div>
+
+    <div class="question-card">
+      <div class="question-top-row">
+        <div id="question-text" class="question-text"></div>
+        <div id="timer" class="timer">Tiempo: 20s</div>
+      </div>
+      <div id="answers-container" class="answers"></div>
+      <div id="feedback" class="feedback"></div>
+      <div class="quiz-footer">
+        <div>
+          <div id="progress-text" class="progress-text"></div>
+          <div id="score-text" class="score-text"></div>
+        </div>
+        <button id="next-btn" class="btn-primary" disabled>Siguiente</button>
+      </div>
+    </div>
+
+    <div id="result-container" class="result-card hidden">
+      <div id="result-main" class="result-main"></div>
+      <div id="result-detail" class="result-detail"></div>
+      <div id="result-tag" class="result-tag"></div>
+      <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <button id="retry-btn" class="btn-secondary">Repetir bloque</button>
+        <button id="back-home-btn" class="btn-secondary">Volver al inicio</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  // --- Configuración de rangos de edad y bloques ---
+
+  const ageRanges = [
+    { id: "3_5",   label: "3 a 5 años" },
+    { id: "6_7",   label: "6 a 7 años" },
+    { id: "8_9",   label: "8 a 9 años" },
+    { id: "10_11", label: "10 a 11 años" },
+    { id: "12_16", label: "12 a 16 años" },
+    { id: "17_94", label: "17 a 94 años" }
+  ];
+
+  const ageOrder = ageRanges.map(a => a.id);
+
+  const blocks = [
+    { id: "Ad",  label: "Adivinanzas (Ad)",         icon: "🧩" },
+    { id: "An",  label: "Analogías verbales (An)",  icon: "🔗" },
+    { id: "Ca",  label: "Categorías (Ca)",          icon: "📦" },
+    { id: "Fi",  label: "Figuras incompletas (Fi)", icon: "🔺" },
+    { id: "Mv",  label: "Memoria verbal (Mv)",      icon: "🎧" },
+    { id: "Mnv", label: "Memoria no verbal (Mnv)",  icon: "👁️" }
+  ];
+
+  /*
+    Base de datos de preguntas.
+    Objetivo: hasta 20 preguntas por bloque y por edad.
+    Estructura:
+
+    {
+      id: "Ad_3_5_01",
+      block: "Ad",
+      age: "3_5",
+      difficulty: 1,
+      question: "Texto...",
+      options: ["A", "B", "C", "D"],
+      correctIndex: 1
+    }
+
+    IMPORTANTE: Para llegar a 720 ítems, solo tienes que seguir
+    añadiendo objetos con este formato para cada combinación
+    (block, age). La lógica ya está preparada.
+  */
+
+  const questions = [
+  
+{ id: "Ad_3_5_01", block: "Ad", age: "3_5", difficulty: 1, question: "Es un animal que dice «miau» y le gusta dormir al sol.", options: ["Perro", "Gato", "Pájaro", "Pez"], correctIndex: 1 },
+{ id: "Ad_3_5_02", block: "Ad", age: "3_5", difficulty: 1, question: "Es rojo y redondo y lo chutas con el pie para jugar.", options: ["Libro", "Pelota", "Caja", "Lupa"], correctIndex: 1 },
+{ id: "Ad_3_5_03", block: "Ad", age: "3_5", difficulty: 1, question: "Da leche y dice «muuu». ¿Qué es?", options: ["Vaca", "Cabra", "Cerdo", "Gato"], correctIndex: 0 },
+{ id: "Ad_3_5_04", block: "Ad", age: "3_5", difficulty: 1, question: "Tiene alas y pone huevos.", options: ["Perro", "Gallina", "Rana", "Pez"], correctIndex: 1 },
+{ id: "Ad_3_5_05", block: "Ad", age: "3_5", difficulty: 2, question: "Lo usas para dibujar, es de madera y tiene mina.", options: ["Rotulador", "Tijeras", "Lápiz", "Pincel"], correctIndex: 2 },
+{ id: "Ad_3_5_06", block: "Ad", age: "3_5", difficulty: 2, question: "Lo abres cuando llueve para no mojarte.", options: ["Gorro", "Paraguas", "Caja", "Silla"], correctIndex: 1 },
+{ id: "Ad_3_5_07", block: "Ad", age: "3_5", difficulty: 2, question: "Es amarillo, alargado y se come.", options: ["Manzana", "Patata", "Plátano", "Zanahoria"], correctIndex: 2 },
+{ id: "Ad_3_5_08", block: "Ad", age: "3_5", difficulty: 2, question: "Vuela y tiene colores muy bonitos.", options: ["Avión", "Mariposa", "Perro", "Gato"], correctIndex: 1 },
+{ id: "Ad_3_5_09", block: "Ad", age: "3_5", difficulty: 3, question: "Es dulce, lo comes de postre y a veces es de chocolate.", options: ["Helado", "Pizza", "Sopa", "Carne"], correctIndex: 0 },
+{ id: "Ad_3_5_10", block: "Ad", age: "3_5", difficulty: 3, question: "La vaca lo produce, es blanco y lo bebemos.", options: ["Agua", "Zumo", "Leche", "Refresco"], correctIndex: 2 },
+{ id: "Ad_3_5_11", block: "Ad", age: "3_5", difficulty: 3, question: "Es un vehículo amarillo que lleva niños a la escuela.", options: ["Ambulancia", "Autobús escolar", "Camión", "Taxi"], correctIndex: 1 },
+{ id: "Ad_3_5_12", block: "Ad", age: "3_5", difficulty: 3, question: "Es redondo y marca la hora.", options: ["Regla", "Reloj", "Lámpara", "Plato"], correctIndex: 1 },
+{ id: "Ad_3_5_13", block: "Ad", age: "3_5", difficulty: 3, question: "Es pequeño, salta y le gustan los charcos.", options: ["Gato", "Rana", "Pez", "Pájaro"], correctIndex: 1 },
+{ id: "Ad_3_5_14", block: "Ad", age: "3_5", difficulty: 4, question: "Se pela antes de comerlo, por fuera es naranja.", options: ["Plátano", "Manzana", "Naranja", "Kiwi"], correctIndex: 2 },
+{ id: "Ad_3_5_15", block: "Ad", age: "3_5", difficulty: 4, question: "En ella duermes todas las noches.", options: ["Mesa", "Silla", "Cama", "Estufa"], correctIndex: 2 },
+{ id: "Ad_3_5_16", block: "Ad", age: "3_5", difficulty: 4, question: "Brilla en el cielo durante el día.", options: ["Luna", "Estrella", "Sol", "Nube"], correctIndex: 2 },
+{ id: "Ad_3_5_17", block: "Ad", age: "3_5", difficulty: 4, question: "Se usa para cortar papel y tiene dos agujeros para los dedos.", options: ["Cuchillo", "Tijeras", "Peine", "Regla"], correctIndex: 1 },
+{ id: "Ad_3_5_18", block: "Ad", age: "3_5", difficulty: 5, question: "De noche está en el cielo y cambia de forma.", options: ["Luna", "Estrella", "Sol", "Planeta"], correctIndex: 0 },
+{ id: "Ad_3_5_19", block: "Ad", age: "3_5", difficulty: 5, question: "Te la pones en los pies y tiene cordones.", options: ["Guantes", "Gafas", "Zapatos", "Sombrero"], correctIndex: 2 },
+{ id: "Ad_3_5_20", block: "Ad", age: "3_5", difficulty: 5, question: "La saltas con los pies, es larga y sirve para jugar.", options: ["Cuerda", "Pelota", "Patinete", "Bici"], correctIndex: 0 },
+{ id: "Ad_6_7_01", block: "Ad", age: "6_7", difficulty: 4, question: "Lo usan los estudiantes, tiene tapas y muchas páginas para leer.", options: ["Casa", "Libro", "Carta", "Plato"], correctIndex: 1 },
+{ id: "Ad_6_7_02", block: "Ad", age: "6_7", difficulty: 4, question: "Vuela sin motor, tiene plumas, y no es avión.", options: ["Bolsa", "Paloma", "Cometa", "Mariposa"], correctIndex: 1 },
+{ id: "Ad_6_7_03", block: "Ad", age: "6_7", difficulty: 4, question: "Lo necesitas para ver en la oscuridad.", options: ["Lámpara", "Tenedor", "Regla", "Cuerda"], correctIndex: 0 },
+{ id: "Ad_6_7_04", block: "Ad", age: "6_7", difficulty: 4, question: "No tiene patas ni cola, pero guarda animales dentro.", options: ["Arca zoológico", "Caja mochila", "Granja zoológico", "Zoológico"], correctIndex: 3 },
+{ id: "Ad_6_7_05", block: "Ad", age: "6_7", difficulty: 4, question: "Suena fuerte, lo golpeas y marca el ritmo.", options: ["Piano", "Violín", "Tambor", "Flauta"], correctIndex: 2 },
+{ id: "Ad_6_7_06", block: "Ad", age: "6_7", difficulty: 4, question: "Lo usas para decir la hora, pero no tiene agujas.", options: ["Reloj digital", "Reloj de arena", "Calendarío", "Teléfono"], correctIndex: 0 },
+{ id: "Ad_6_7_07", block: "Ad", age: "6_7", difficulty: 5, question: "Tiene botones, pantalla, y te deja llamar a alguien.", options: ["Teléfono móvil", "Calculadora", "Tablet", "Reloj"], correctIndex: 0 },
+{ id: "Ad_6_7_08", block: "Ad", age: "6_7", difficulty: 5, question: "Una casa para libros.", options: ["Estuche", "Estante", "Bolsa", "Clóset"], correctIndex: 1 },
+{ id: "Ad_6_7_09", block: "Ad", age: "6_7", difficulty: 5, question: "Lo ves en el cielo después de la lluvia, tiene muchos colores.", options: ["Arcoiris", "Cometa", "Estrella", "Nube"], correctIndex: 0 },
+{ id: "Ad_6_7_10", block: "Ad", age: "6_7", difficulty: 5, question: "No tiene patas, pero corre; no tiene boca, pero suena.", options: ["Radio", "Tren", "Aguacero", "Río"], correctIndex: 3 },
+{ id: "Ad_6_7_11", block: "Ad", age: "6_7", difficulty: 5, question: "Te dice direcciones, siempre señala al norte.", options: ["GPS", "Brújula", "Reloj", "Plano"], correctIndex: 1 },
+{ id: "Ad_6_7_12", block: "Ad", age: "6_7", difficulty: 5, question: "Lo soplas para inflarlo, pero explota si lo pinchas.", options: ["Bolsa", "Globo", "Burbuja", "Botella"], correctIndex: 1 },
+{ id: "Ad_6_7_13", block: "Ad", age: "6_7", difficulty: 6, question: "Tiene dientes pero no muerde, sirve para peinar.", options: ["Peine", "Tenedor", "Sierra", "Regla"], correctIndex: 0 },
+{ id: "Ad_6_7_14", block: "Ad", age: "6_7", difficulty: 6, question: "Lo abres para entrar, lo cierras para salir.", options: ["Mochila", "Ventana", "Armario", "Puerta"], correctIndex: 3 },
+{ id: "Ad_6_7_15", block: "Ad", age: "6_7", difficulty: 6, question: "Sube y baja, pero no camina; muchos niños lo usan para jugar.", options: ["Camión", "Columpio", "Trampolín", "Tobogán"], correctIndex: 1 },
+{ id: "Ad_6_7_16", block: "Ad", age: "6_7", difficulty: 6, question: "Brilla en la noche y NO es luna.", options: ["Planeta", "Linterna", "Estrella", "Fuego"], correctIndex: 2 },
+{ id: "Ad_6_7_17", block: "Ad", age: "6_7", difficulty: 6, question: "Lo usas para escuchar música, va en las orejas.", options: ["Altavoz", "Cascos", "Radios", "Trompeta"], correctIndex: 1 },
+{ id: "Ad_6_7_18", block: "Ad", age: "6_7", difficulty: 6, question: "Se usa para medir temperaturas.", options: ["Reloj", "Regla", "Termómetro", "Brújula"], correctIndex: 2 },
+{ id: "Ad_6_7_19", block: "Ad", age: "6_7", difficulty: 6, question: "De ellas nacen árboles pequeños.", options: ["Hojas", "Frutos", "Semillas", "Raíces"], correctIndex: 2 },
+{ id: "Ad_6_7_20", block: "Ad", age: "6_7", difficulty: 6, question: "Lo haces con la boca para saludar, cantar o silbar.", options: ["Respirar", "Hablar", "Escuchar", "Comer"], correctIndex: 1 },
+{ id: "Ad_8_9_01", block: "Ad", age: "8_9", difficulty: 4, question: "Tiene teclas, pantalla y la usas para hacer operaciones de mates.", options: ["Reloj", "Calculadora", "Móvil", "Agenda"], correctIndex: 1 },
+{ id: "Ad_8_9_02", block: "Ad", age: "8_9", difficulty: 4, question: "Tiene ruedas, pedales y un manillar, pero no es una moto.", options: ["Patinete", "Bicicleta", "Coche", "Tren"], correctIndex: 1 },
+{ id: "Ad_8_9_03", block: "Ad", age: "8_9", difficulty: 4, question: "Lo usas para buscar palabras y su significado.", options: ["Enciclopedia", "Diccionario", "Periódico", "Comic"], correctIndex: 1 },
+{ id: "Ad_8_9_04", block: "Ad", age: "8_9", difficulty: 4, question: "Marca el norte y la usan los exploradores.", options: ["Reloj", "Brújula", "Telescopio", "Regla"], correctIndex: 1 },
+{ id: "Ad_8_9_05", block: "Ad", age: "8_9", difficulty: 4, question: "En él guardas archivos, fotos y documentos del ordenador.", options: ["Cable", "Imán", "Ratón", "Disco duro"], correctIndex: 3 },
+{ id: "Ad_8_9_06", block: "Ad", age: "8_9", difficulty: 5, question: "Tiene páginas con días y meses, pero no es un reloj.", options: ["Agenda", "Calendario", "Contrato", "Diccionario"], correctIndex: 1 },
+{ id: "Ad_8_9_07", block: "Ad", age: "8_9", difficulty: 5, question: "Lo usas para ver cosas lejanas, como montañas o aves.", options: ["Microscopio", "Prismáticos", "Brújula", "Gafas de sol"], correctIndex: 1 },
+{ id: "Ad_8_9_08", block: "Ad", age: "8_9", difficulty: 5, question: "Es un coche grande que transporta a muchas personas por la ciudad.", options: ["Autobús", "Taxi", "Furgoneta", "Moto"], correctIndex: 0 },
+{ id: "Ad_8_9_09", block: "Ad", age: "8_9", difficulty: 5, question: "Es un deporte con raqueta y pelota que se juega con red en el centro.", options: ["Fútbol", "Baloncesto", "Tenis", "Rugby"], correctIndex: 2 },
+{ id: "Ad_8_9_10", block: "Ad", age: "8_9", difficulty: 5, question: "Es un líquido rojo que corre por tus venas.", options: ["Agua", "Savia", "Sangre", "Leche"], correctIndex: 2 },
+{ id: "Ad_8_9_11", block: "Ad", age: "8_9", difficulty: 5, question: "Lo usas para leer libros digitales con una pantalla de tinta electrónica.", options: ["Móvil", "Tableta", "E-reader", "Ordenador"], correctIndex: 2 },
+{ id: "Ad_8_9_12", block: "Ad", age: "8_9", difficulty: 6, question: "Es un mapa en 3D que gira y muestra países y océanos.", options: ["Mapa mural", "Globo terráqueo", "Maqueta", "Planisferio"], correctIndex: 1 },
+{ id: "Ad_8_9_13", block: "Ad", age: "8_9", difficulty: 6, question: "Tiene teclas blancas y negras, y lo tocas con las manos.", options: ["Violín", "Piano", "Flauta", "Tambor"], correctIndex: 1 },
+{ id: "Ad_8_9_14", block: "Ad", age: "8_9", difficulty: 6, question: "Lo usas para escribir en el ordenador, pero no es el ratón.", options: ["Pantalla", "Teclado", "Impresora", "Altavoz"], correctIndex: 1 },
+{ id: "Ad_8_9_15", block: "Ad", age: "8_9", difficulty: 6, question: "Es un vehículo que vuela y lleva pasajeros de una ciudad a otra.", options: ["Helicóptero", "Avión", "Dirigible", "Cohete"], correctIndex: 1 },
+{ id: "Ad_8_9_16", block: "Ad", age: "8_9", difficulty: 6, question: "Es un animal que vive en el mar, tiene tentáculos y a veces tinta.", options: ["Ballena", "Medusa", "Pulpo", "Delfín"], correctIndex: 2 },
+{ id: "Ad_8_9_17", block: "Ad", age: "8_9", difficulty: 6, question: "Lo usas para medir la temperatura de una persona o del ambiente.", options: ["Barómetro", "Termómetro", "Regla", "Cronómetro"], correctIndex: 1 },
+{ id: "Ad_8_9_18", block: "Ad", age: "8_9", difficulty: 6, question: "Tiene portada, noticias, fotos y se publica cada día o cada semana.", options: ["Comic", "Revista deportiva", "Periódico", "Agenda escolar"], correctIndex: 2 },
+{ id: "Ad_8_9_19", block: "Ad", age: "8_9", difficulty: 6, question: "Es una construcción muy alta con muchos pisos, típica de las ciudades grandes.", options: ["Chalet", "Cabaña", "Rascacielos", "Barraca"], correctIndex: 2 },
+{ id: "Ad_8_9_20", block: "Ad", age: "8_9", difficulty: 6, question: "Funciona con electricidad y sirve para enfriar comida y bebidas.", options: ["Microondas", "Horno", "Nevera", "Tostadora"], correctIndex: 2 },
+{ id: "Ad_10_11_01", block: "Ad", age: "10_11", difficulty: 6, question: "Tiene venas pero no sangre, y puedes arrancarle las hojas para leer.", options: ["Libro", "Mapa", "Árbol", "Atlas"], correctIndex: 0 },
+{ id: "Ad_10_11_02", block: "Ad", age: "10_11", difficulty: 6, question: "Si lo partes, no lo comes; si lo estudias, te nutre.", options: ["Pan", "Libro", "Tema", "Problema"], correctIndex: 1 },
+{ id: "Ad_10_11_03", block: "Ad", age: "10_11", difficulty: 6, question: "Guarda secretos del pasado y la usas para estudiar civilizaciones.", options: ["Agenda", "Enciclopedia", "Historia", "Arqueología"], correctIndex: 3 },
+{ id: "Ad_10_11_04", block: "Ad", age: "10_11", difficulty: 6, question: "Te hace viajar sin caminar y ver sin estar presente.", options: ["Cámara", "Cine", "Libro", "Internet"], correctIndex: 2 },
+{ id: "Ad_10_11_05", block: "Ad", age: "10_11", difficulty: 6, question: "Cuando está abierto no te moja, cuando está cerrado no te cubre.", options: ["Bote", "Cubo", "Paraguas", "Piscina"], correctIndex: 2 },
+{ id: "Ad_10_11_06", block: "Ad", age: "10_11", difficulty: 7, question: "No tiene bocas pero habla; no tiene ojos pero te mira.", options: ["Teléfono", "Libro", "Televisor", "Radio"], correctIndex: 1 },
+{ id: "Ad_10_11_07", block: "Ad", age: "10_11", difficulty: 7, question: "Es pequeño pero puede guardar un conocimiento infinito.", options: ["Lapicero", "Llave", "USB", "Regla"], correctIndex: 2 },
+{ id: "Ad_10_11_08", block: "Ad", age: "10_11", difficulty: 7, question: "Lo rompes para entrar, y al entrar queda arreglado.", options: ["Contraseña", "Ventana", "Puerta", "Candado"], correctIndex: 0 },
+{ id: "Ad_10_11_09", block: "Ad", age: "10_11", difficulty: 7, question: "Si lo usas, otros te escuchan; si lo guardas, nadie te oye.", options: ["Foco", "Megáfono", "Reproductor", "Altavoz"], correctIndex: 1 },
+{ id: "Ad_10_11_10", block: "Ad", age: "10_11", difficulty: 7, question: "Puede encender una casa entera sin tener fuego.", options: ["Cable", "Estufa", "Enchufe", "Fósforo"], correctIndex: 2 },
+{ id: "Ad_10_11_11", block: "Ad", age: "10_11", difficulty: 7, question: "Habla con números y te da resultados sin estudiar.", options: ["Calculadora", "Profesor", "Robot", "Libro"], correctIndex: 0 },
+{ id: "Ad_10_11_12", block: "Ad", age: "10_11", difficulty: 7, question: "Lleva mensajes sin caminar y viaja más rápido que tú.", options: ["Carta", "Email", "Teléfono", "Avión"], correctIndex: 1 },
+{ id: "Ad_10_11_13", block: "Ad", age: "10_11", difficulty: 8, question: "Puede grabar lo que pasa sin entenderlo.", options: ["Agenda", "Móvil", "Cámara", "USB"], correctIndex: 2 },
+{ id: "Ad_10_11_14", block: "Ad", age: "10_11", difficulty: 8, question: "No tiene puerta, pero guarda tu información privada.", options: ["Correo", "Computadora", "Caja fuerte", "Archivo"], correctIndex: 1 },
+{ id: "Ad_10_11_15", block: "Ad", age: "10_11", difficulty: 8, question: "No sirve para calentar, pero puede quemar tus ojos.", options: ["Linterna", "Luna", "Soldador", "Sol"], correctIndex: 3 },
+{ id: "Ad_10_11_16", block: "Ad", age: "10_11", difficulty: 8, question: "Puede ver lejos sin tener ojos.", options: ["Binoculares", "Microscopio", "Periscopio", "Telescopio"], correctIndex: 3 },
+{ id: "Ad_10_11_17", block: "Ad", age: "10_11", difficulty: 8, question: "No camina, pero viaja contigo; no escucha, pero te guía.", options: ["Brújula", "Cerebro", "Móvil", "Reloj"], correctIndex: 0 },
+{ id: "Ad_10_11_18", block: "Ad", age: "10_11", difficulty: 8, question: "Va y viene con cada ola, pero nunca se va.", options: ["Arena", "Agua", "Barco", "Horizonte"], correctIndex: 3 },
+{ id: "Ad_10_11_19", block: "Ad", age: "10_11", difficulty: 8, question: "Ocupa espacio sin pesar y vive dentro de las pantallas.", options: ["Sonido", "Idea", "Imagen", "Aire"], correctIndex: 2 },
+{ id: "Ad_10_11_20", block: "Ad", age: "10_11", difficulty: 8, question: "Puede hablar en cualquier idioma sin aprenderlo.", options: ["Traductor", "Profesor", "Libro", "Cerebro"], correctIndex: 0 },
+{ id: "Ad_12_16_01", block: "Ad", age: "12_16", difficulty: 7, question: "No tiene ojos, pero descubre objetos; no piensa, pero predice tu movimiento.", options: ["Cámara", "Algoritmo", "Radar", "Microscopio"], correctIndex: 2 },
+{ id: "Ad_12_16_02", block: "Ad", age: "12_16", difficulty: 7, question: "Divide cualquier número y nunca se equivoca, aunque no sabe contar.", options: ["Calculadora", "División", "Regla", "Software"], correctIndex: 0 },
+{ id: "Ad_12_16_03", block: "Ad", age: "12_16", difficulty: 7, question: "No ocupa espacio, pero puede llenar tu memoria.", options: ["Archivo", "Música", "Conversación", "Foto digital"], correctIndex: 0 },
+{ id: "Ad_12_16_04", block: "Ad", age: "12_16", difficulty: 7, question: "No avanza, pero muestra el futuro; no recuerda, pero enseña el pasado.", options: ["Reloj", "Calendario", "Espejo", "Atlas"], correctIndex: 1 },
+{ id: "Ad_12_16_05", block: "Ad", age: "12_16", difficulty: 7, question: "Conecta a millones sin moverse, pero puede aislar a quien la usa.", options: ["Internet", "Biblioteca", "Carretera", "Red telefónica"], correctIndex: 0 },
+{ id: "Ad_12_16_06", block: "Ad", age: "12_16", difficulty: 7, question: "No es humano, pero aprende; no tiene boca y te responde.", options: ["Robot", "Búsqueda web", "IA", "Chatbot"], correctIndex: 2 },
+{ id: "Ad_12_16_07", block: "Ad", age: "12_16", difficulty: 8, question: "Se abre solo cuando se cierra, y se cierra solo cuando se abre.", options: ["Libro", "Candado", "Puerta", "Programa"], correctIndex: 0 },
+{ id: "Ad_12_16_08", block: "Ad", age: "12_16", difficulty: 8, question: "Puedes doblarlo, guardarlo y consultarlo, aunque no existe físicamente.", options: ["Archivo digital", "Papel", "Idea", "Memoria USB"], correctIndex: 0 },
+{ id: "Ad_12_16_09", block: "Ad", age: "12_16", difficulty: 8, question: "Tiene teclas pero no puertas, lenguaje pero no voz.", options: ["Teclado", "Código", "Candado", "Libro"], correctIndex: 1 },
+{ id: "Ad_12_16_10", block: "Ad", age: "12_16", difficulty: 8, question: "Construye imágenes sin dibujar y captura luz sin verla.", options: ["Móvil", "Radar", "Cámara", "Filtro"], correctIndex: 2 },
+{ id: "Ad_12_16_11", block: "Ad", age: "12_16", difficulty: 8, question: "No corre ni salta, pero puede seguirte a todas partes.", options: ["Contraseña", "Sombra", "Aplicación", "Rastreador GPS"], correctIndex: 3 },
+{ id: "Ad_12_16_12", block: "Ad", age: "12_16", difficulty: 8, question: "No cura enfermedades, pero puede salvar tu vida si lo usas mal.", options: ["Medicamento", "GPS", "Asiento del coche", "Cinturón de seguridad"], correctIndex: 3 },
+{ id: "Ad_12_16_13", block: "Ad", age: "12_16", difficulty: 8, question: "Abre mundos desde tu casa y viaja más rápido que la luz.", options: ["Libro", "Internet", "Teléfono", "Imaginación"], correctIndex: 1 },
+{ id: "Ad_12_16_14", block: "Ad", age: "12_16", difficulty: 9, question: "Controla el poder sin tocarlo y corta el flujo sin esfuerzo.", options: ["Palanca", "Interruptor", "Barra metálica", "Resistencia"], correctIndex: 1 },
+{ id: "Ad_12_16_15", block: "Ad", age: "12_16", difficulty: 9, question: "Transforma movimiento en energía sin mover un músculo.", options: ["Batería", "Dinamo", "Pantalla", "Motor eléctrico"], correctIndex: 1 },
+{ id: "Ad_12_16_16", block: "Ad", age: "12_16", difficulty: 9, question: "No existe en papel y puede ser modificado por cualquiera.", options: ["Documento digital", "Fotografía", "Libro", "Informe"], correctIndex: 0 },
+{ id: "Ad_12_16_17", block: "Ad", age: "12_16", difficulty: 9, question: "No tiene agujas y puede medir tu ritmo sin tocarte.", options: ["Termómetro", "ECG", "Reloj inteligente", "CT"], correctIndex: 2 },
+{ id: "Ad_12_16_18", block: "Ad", age: "12_16", difficulty: 9, question: "No crea calor, pero puede quemar tu tiempo.", options: ["Videojuego", "Estufa", "Luz solar", "Internet"], correctIndex: 0 },
+{ id: "Ad_12_16_19", block: "Ad", age: "12_16", difficulty: 9, question: "Puede destruir memorias con un solo clic, pero también guardarlas para siempre.", options: ["Nube digital", "Papel USB", "Imán", "Carpeta física"], correctIndex: 0 },
+{ id: "Ad_12_16_20", block: "Ad", age: "12_16", difficulty: 9, question: "Toma decisiones rápidas, pero no siente consecuencias.", options: ["Inteligencia Artificial", "Robot", "Humano", "Algoritmo"], correctIndex: 3 },
+{ id: "Ad_17_94_01", block: "Ad", age: "17_94", difficulty: 8, question: "No pesa, no ocupa espacio físico y aun así puede saturar un sistema.", options: ["Energía", "Datos", "Ruido", "Luz"], correctIndex: 1 },
+{ id: "Ad_17_94_02", block: "Ad", age: "17_94", difficulty: 8, question: "No piensa por sí misma, pero puede tomar decisiones mejores que tú en tareas repetitivas.", options: ["Algoritmo", "Neurona", "Sensor", "Memoria RAM"], correctIndex: 0 },
+{ id: "Ad_17_94_03", block: "Ad", age: "17_94", difficulty: 8, question: "Puede viajar de un extremo del planeta a otro sin moverse de un servidor.", options: ["Correo postal", "Señal de radio", "Correo electrónico", "Copia impresa"], correctIndex: 2 },
+{ id: "Ad_17_94_04", block: "Ad", age: "17_94", difficulty: 8, question: "No existe sin observador, pero describe fenómenos que nadie ha visto directamente.", options: ["Modelo matemático", "Sueño", "Mito", "Noticia"], correctIndex: 0 },
+{ id: "Ad_17_94_05", block: "Ad", age: "17_94", difficulty: 8, question: "Ordena el caos de los datos en patrones, pero no entiende ninguno.", options: ["Tabla periódica", "Clasificador algorítmico", "Experimento", "Gráfico de barras"], correctIndex: 1 },
+{ id: "Ad_17_94_06", block: "Ad", age: "17_94", difficulty: 9, question: "Es aleatorio en cada caso, pero perfectamente predecible en conjunto.", options: ["Casualidad", "Ruido blanco", "Variable aleatoria", "Lotería"], correctIndex: 2 },
+{ id: "Ad_17_94_07", block: "Ad", age: "17_94", difficulty: 9, question: "No es energía ni materia, pero cambia cómo fluye toda la información.", options: ["Gravedad", "Política", "Publicación científica", "Protocolo de comunicación"], correctIndex: 3 },
+{ id: "Ad_17_94_08", block: "Ad", age: "17_94", difficulty: 9, question: "No se ve, pero define la posición; no se oye, pero guía cada paso del GPS.", options: ["Frecuencia", "Latitud", "Peso", "Longitud de onda"], correctIndex: 1 },
+{ id: "Ad_17_94_09", block: "Ad", age: "17_94", difficulty: 9, question: "Puede estar en dos estados a la vez, pero se derrumba al observarla.", options: ["Partícula clásica", "Variable categórica", "Superposición cuántica", "Fuerza gravitatoria"], correctIndex: 2 },
+{ id: "Ad_17_94_10", block: "Ad", age: "17_94", difficulty: 9, question: "No agrega información nueva, pero puede cambiar por completo una conclusión.", options: ["Muestra grande", "Gráfico de sectores", "Sesgo de selección", "Promedio aritmético"], correctIndex: 2 },
+{ id: "Ad_17_94_11", block: "Ad", age: "17_94", difficulty: 9, question: "Se usa para simplificar la realidad y, a veces, para justificar decisiones erróneas.", options: ["Estadística descriptiva", "Modelo simplificado", "Experimento doble ciego", "Simulación de Monte Carlo"], correctIndex: 1 },
+{ id: "Ad_17_94_12", block: "Ad", age: "17_94", difficulty: 9, question: "No es error, pero puede convertir una señal clara en algo inútil.", options: ["Red neuronal", "Ruido", "Curva de calibración", "Muestreo estratificado"], correctIndex: 1 },
+{ id: "Ad_17_94_13", block: "Ad", age: "17_94", difficulty: 10, question: "No te protege de la verdad, pero puede retrasar cuánto tarda en alcanzarte.", options: ["Cortafuegos", "Desinformación", "Cifrado", "Copia de seguridad"], correctIndex: 1 },
+{ id: "Ad_17_94_14", block: "Ad", age: "17_94", difficulty: 10, question: "Demuestra que algo funciona en un contexto ideal que nunca se da en la realidad.", options: ["Ensayo clínico", "Modelo de laboratorio", "Teoría conspirativa", "Simulación climática"], correctIndex: 1 },
+{ id: "Ad_17_94_15", block: "Ad", age: "17_94", difficulty: 10, question: "Puede ser fuerte, puede ser débil, pero siempre conecta causa y consecuencia.", options: ["Correlación", "Causalidad", "Hipótesis", "Confusión"], correctIndex: 1 },
+{ id: "Ad_17_94_16", block: "Ad", age: "17_94", difficulty: 10, question: "No nació humana, pero ha aprendido a imitar conversaciones mejor que muchos humanos.", options: ["Robot físico", "Buscador web", "Modelos de lenguaje", "I.A. simbólica clásica"], correctIndex: 2 },
+{ id: "Ad_17_94_17", block: "Ad", age: "17_94", difficulty: 10, question: "Promete explicarlo todo con pocas variables, y casi siempre se equivoca.", options: ["Modelo lineal simple", "Teoría del todo", "Muestreo aleatorio", "Grafico de dispersión"], correctIndex: 1 },
+{ id: "Ad_17_94_18", block: "Ad", age: "17_94", difficulty: 10, question: "No se ve ni se toca, pero si lo pierdes, todo tu sistema deja de existir para los demás.", options: ["Contraseña", "Algoritmo", "Ruta de acceso", "Código fuente"], correctIndex: 0 },
+{ id: "Ad_17_94_19", block: "Ad", age: "17_94", difficulty: 10, question: "No decide qué está bien, pero puede mostrar cuántas veces algo salió mal.", options: ["Función de coste", "Registro de errores", "Gráfico circular", "Media aritmética"], correctIndex: 1 },
+{ id: "Ad_17_94_20", block: "Ad", age: "17_94", difficulty: 10, question: "No te hace más inteligente por sí sola, pero sin ella no sabrías que te equivocas.", options: ["Ruido experimental", "Intervalo de confianza", "P-valor", "Gráfico de barras"], correctIndex: 2 },
+{ id: "An_3_5_01", block: "An", age: "3_5", difficulty: 1, question: "Manzana es a fruta como zanahoria es a ________", options: ["carne", "verdura", "juguete", "gorra"], correctIndex: 1 },
+{ id: "An_3_5_02", block: "An", age: "3_5", difficulty: 1, question: "Gato es a maullar como perro es a ________", options: ["dormir", "correr", "ladrar", "leer"], correctIndex: 2 },
+{ id: "An_3_5_03", block: "An", age: "3_5", difficulty: 1, question: "Bicicleta es a pedalear como coche es a ________", options: ["comer", "volar", "conducir", "pintar"], correctIndex: 2 },
+{ id: "An_3_5_04", block: "An", age: "3_5", difficulty: 1, question: "Reloj es a hora como calendario es a ________", options: ["semana", "mes", "luz", "fresa"], correctIndex: 1 },
+{ id: "An_3_5_05", block: "An", age: "3_5", difficulty: 1, question: "Leche es a beber como pan es a ________", options: ["leer", "masticar", "comer", "volar"], correctIndex: 2 },
+{ id: "An_3_5_06", block: "An", age: "3_5", difficulty: 2, question: "Profesor es a enseñar como cocinero es a ________", options: ["hornear", "pescar", "dormir", "pintar"], correctIndex: 0 },
+{ id: "An_3_5_07", block: "An", age: "3_5", difficulty: 2, question: "Pato es a nadar como pájaro es a ________", options: ["volar", "correr", "comer", "planchar"], correctIndex: 0 },
+{ id: "An_3_5_08", block: "An", age: "3_5", difficulty: 2, question: "Libro es a leer como pelota es a ________", options: ["jugar", "oler", "planchar", "contar"], correctIndex: 0 },
+{ id: "An_3_5_09", block: "An", age: "3_5", difficulty: 2, question: "Plato es a comida como vaso es a ________", options: ["escribir", "beber", "peinar", "nadar"], correctIndex: 1 },
+{ id: "An_3_5_10", block: "An", age: "3_5", difficulty: 2, question: "Escuela es a estudiar como hospital es a ________", options: ["curarse", "correr", "volar", "dibujar"], correctIndex: 0 },
+{ id: "An_3_5_11", block: "An", age: "3_5", difficulty: 2, question: "Peine es a cabello como cepillo es a ________", options: ["ventana", "mano", "dientes", "casa"], correctIndex: 2 },
+{ id: "An_3_5_12", block: "An", age: "3_5", difficulty: 3, question: "Flor es a jardín como pez es a ________", options: ["bosque", "desierto", "río", "cielo"], correctIndex: 2 },
+{ id: "An_3_5_13", block: "An", age: "3_5", difficulty: 3, question: "Zapato es a pie como guante es a ________", options: ["pelo", "mano", "lengua", "oreja"], correctIndex: 1 },
+{ id: "An_3_5_14", block: "An", age: "3_5", difficulty: 3, question: "Estufa es a caliente como helado es a ________", options: ["frío", "amargo", "estrecho", "triangular"], correctIndex: 0 },
+{ id: "An_3_5_15", block: "An", age: "3_5", difficulty: 3, question: "Lápiz es a escribir como pincel es a ________", options: ["botar", "pintar", "saltar", "dividir"], correctIndex: 1 },
+{ id: "An_3_5_16", block: "An", age: "3_5", difficulty: 3, question: "Tenedor es a comer como manta es a ________", options: ["soñar", "abrigar", "balar", "saltar"], correctIndex: 1 },
+{ id: "An_3_5_17", block: "An", age: "3_5", difficulty: 3, question: "Cama es a dormir como mesa es a ________", options: ["comer", "nadar", "escribir", "cantar"], correctIndex: 0 },
+{ id: "An_3_5_18", block: "An", age: "3_5", difficulty: 3, question: "Ojo es a ver como oído es a ________", options: ["oler", "oír", "pintar", "mezclar"], correctIndex: 1 },
+{ id: "An_3_5_19", block: "An", age: "3_5", difficulty: 3, question: "Perro es a mascota como vaca es a ________", options: ["herramienta", "ganado", "teléfono", "pintura"], correctIndex: 1 },
+{ id: "An_3_5_20", block: "An", age: "3_5", difficulty: 3, question: "Botella es a agua como plato es a ________", options: ["helado", "comida", "techo", "fuego"], correctIndex: 1 },
+{ id: "An_6_7_01", block: "An", age: "6_7", difficulty: 2, question: "Colmena es a abejas como nido es a ________", options: ["gallinas", "pájaros", "tiburones", "iceberg"], correctIndex: 1 },
+{ id: "An_6_7_02", block: "An", age: "6_7", difficulty: 2, question: "Carpintero es a madera como panadero es a ________", options: ["harina", "gafas", "computadora", "piedra"], correctIndex: 0 },
+{ id: "An_6_7_03", block: "An", age: "6_7", difficulty: 2, question: "Peine es a cabello como cepillo es a ________", options: ["ventanas", "madera", "dientes", "ruido"], correctIndex: 2 },
+{ id: "An_6_7_04", block: "An", age: "6_7", difficulty: 2, question: "Botas son a pies como guantes son a ________", options: ["cabeza", "manos", "pelota", "tormenta"], correctIndex: 1 },
+{ id: "An_6_7_05", block: "An", age: "6_7", difficulty: 3, question: "Doctor es a curar como maestro es a ________", options: ["lavar", "enseñar", "comprar", "saltar"], correctIndex: 1 },
+{ id: "An_6_7_06", block: "An", age: "6_7", difficulty: 3, question: "Fuego es a calor como hielo es a ________", options: ["velocidad", "frío", "papel", "café"], correctIndex: 1 },
+{ id: "An_6_7_07", block: "An", age: "6_7", difficulty: 3, question: "Luna es a noche como sol es a ________", options: ["flores", "lluvia", "día", "cepillo"], correctIndex: 2 },
+{ id: "An_6_7_08", block: "An", age: "6_7", difficulty: 3, question: "Pintor es a pincel como escritor es a ________", options: ["teclado", "lápiz", "silla", "estufa"], correctIndex: 1 },
+{ id: "An_6_7_09", block: "An", age: "6_7", difficulty: 3, question: "Horno es a caliente como nevera es a ________", options: ["placa", "frío", "oído", "tenedor"], correctIndex: 1 },
+{ id: "An_6_7_10", block: "An", age: "6_7", difficulty: 3, question: "Tierra es a planeta como sol es a ________", options: ["estrella", "mar", "número", "puerta"], correctIndex: 0 },
+{ id: "An_6_7_11", block: "An", age: "6_7", difficulty: 4, question: "Libro es a biblioteca como auto es a ________", options: ["río", "garaje", "energía", "acera"], correctIndex: 1 },
+{ id: "An_6_7_12", block: "An", age: "6_7", difficulty: 4, question: "Helado es a frío como sopa es a ________", options: ["caliente", "árbol", "hierro", "lago"], correctIndex: 0 },
+{ id: "An_6_7_13", block: "An", age: "6_7", difficulty: 4, question: "Pájaro es a volar como pez es a ________", options: ["saltar", "saltar", "limar", "nadar"], correctIndex: 3 },
+{ id: "An_6_7_14", block: "An", age: "6_7", difficulty: 4, question: "Llave es a abrir como cuchillo es a ________", options: ["bañar", "cortar", "pintar", "masticar"], correctIndex: 1 },
+{ id: "An_6_7_15", block: "An", age: "6_7", difficulty: 4, question: "Biblioteca es a leer como cine es a ________", options: ["volar", "ver", "contar", "coser"], correctIndex: 1 },
+{ id: "An_6_7_16", block: "An", age: "6_7", difficulty: 4, question: "Velocidad es a rápido como peso es a ________", options: ["ligero", "polvo", "estrecho", "amargo"], correctIndex: 0 },
+{ id: "An_6_7_17", block: "An", age: "6_7", difficulty: 4, question: "Hoja es a árbol como ladrillo es a ________", options: ["motor", "puente", "casa", "árbol"], correctIndex: 2 },
+{ id: "An_6_7_18", block: "An", age: "6_7", difficulty: 4, question: "Semáforo es a tráfico como timbre es a ________", options: ["ropa", "aviso", "edificio", "llave"], correctIndex: 1 },
+{ id: "An_6_7_19", block: "An", age: "6_7", difficulty: 4, question: "Estufa es a calentar como ventilador es a ________", options: ["volar", "enfriar", "escribir", "rascar"], correctIndex: 1 },
+{ id: "An_6_7_20", block: "An", age: "6_7", difficulty: 4, question: "Museo es a arte como zoológico es a ________", options: ["planos", "peces", "animales", "dimensiones"], correctIndex: 2 },
+{ id: "An_8_9_01", block: "An", age: "8_9", difficulty: 3, question: "Capitán es a barco como piloto es a ________", options: ["avión", "ciudad", "silla", "carbón"], correctIndex: 0 },
+{ id: "An_8_9_02", block: "An", age: "8_9", difficulty: 3, question: "Naranja es a cítrico como manzana es a ________", options: ["pescado", "fruta", "lana", "roca"], correctIndex: 1 },
+{ id: "An_8_9_03", block: "An", age: "8_9", difficulty: 3, question: "Actor es a teatro como futbolista es a ________", options: ["estadio", "armario", "papel", "bici"], correctIndex: 0 },
+{ id: "An_8_9_04", block: "An", age: "8_9", difficulty: 3, question: "Teclado es a escribir como micrófono es a ________", options: ["encender", "contar", "hablar", "ver"], correctIndex: 2 },
+{ id: "An_8_9_05", block: "An", age: "8_9", difficulty: 3, question: "Hoja es a árbol como ladrillo es a ________", options: ["bicicleta", "casa", "agua", "cuaderno"], correctIndex: 1 },
+{ id: "An_8_9_06", block: "An", age: "8_9", difficulty: 4, question: "Pintor es a cuadro como escultor es a ________", options: ["arcilla", "ruido", "sierra", "metal"], correctIndex: 0 },
+{ id: "An_8_9_07", block: "An", age: "8_9", difficulty: 4, question: "Fuego es a calor como hielo es a ________", options: ["sal", "ruidos", "frío", "luz"], correctIndex: 2 },
+{ id: "An_8_9_08", block: "An", age: "8_9", difficulty: 4, question: "Radio es a escuchar como televisor es a ________", options: ["saltar", "ver", "tejer", "oler"], correctIndex: 1 },
+{ id: "An_8_9_09", block: "An", age: "8_9", difficulty: 4, question: "Libro es a información como telescopio es a ________", options: ["color", "lata", "imagen", "energía"], correctIndex: 2 },
+{ id: "An_8_9_10", block: "An", age: "8_9", difficulty: 4, question: "Semilla es a planta como huevo es a ________", options: ["ropa", "GPS", "ave", "contrato"], correctIndex: 2 },
+{ id: "An_8_9_11", block: "An", age: "8_9", difficulty: 5, question: "Neumático es a coche como alas son a ________", options: ["avión", "tijeras", "diente", "percha"], correctIndex: 0 },
+{ id: "An_8_9_12", block: "An", age: "8_9", difficulty: 5, question: "Estufa es a calentar como ventilador es a ________", options: ["pegar", "enfriar", "abrir", "coser"], correctIndex: 1 },
+{ id: "An_8_9_13", block: "An", age: "8_9", difficulty: 5, question: "Hielo es a agua como vapor es a ________", options: ["manzana", "agua", "plástico", "vela"], correctIndex: 1 },
+{ id: "An_8_9_14", block: "An", age: "8_9", difficulty: 5, question: "Científico es a laboratorio como futbolista es a ________", options: ["mar", "gimnasio", "estadio", "zapatería"], correctIndex: 2 },
+{ id: "An_8_9_15", block: "An", age: "8_9", difficulty: 5, question: "Estudiante es a aprender como músico es a ________", options: ["talar", "escuchar", "tocar", "freír"], correctIndex: 2 },
+{ id: "An_8_9_16", block: "An", age: "8_9", difficulty: 5, question: "Dulce es a azúcar como ácido es a ________", options: ["limón", "moto", "vaso", "clima"], correctIndex: 0 },
+{ id: "An_8_9_17", block: "An", age: "8_9", difficulty: 5, question: "Patio es a recreo como dormitorio es a ________", options: ["estudiar", "descanso", "semáforo", "cepillo"], correctIndex: 1 },
+{ id: "An_8_9_18", block: "An", age: "8_9", difficulty: 5, question: "Rueda es a rodar como vela es a ________", options: ["decorar", "navegar", "medir", "escribir"], correctIndex: 1 },
+{ id: "An_8_9_19", block: "An", age: "8_9", difficulty: 5, question: "Teclado es a computadora como volante es a ________", options: ["televisión", "coche", "techo", "campana"], correctIndex: 1 },
+{ id: "An_8_9_20", block: "An", age: "8_9", difficulty: 5, question: "Corazón es a sangre como pulmón es a ________", options: ["oxígeno", "arena", "hierro", "vaso"], correctIndex: 0 },
+{ id: "An_10_11_01", block: "An", age: "10_11", difficulty: 4, question: "Fábrica es a productos como biblioteca es a ________", options: ["lenadoras", "libros", "mariscos", "planetas"], correctIndex: 1 },
+{ id: "An_10_11_02", block: "An", age: "10_11", difficulty: 4, question: "Arquitecto es a planos como músico es a ________", options: ["ingredientes", "notas", "tenazas", "motores"], correctIndex: 1 },
+{ id: "An_10_11_03", block: "An", age: "10_11", difficulty: 4, question: "Clavo es a martillo como tornillo es a ________", options: ["calculadora", "destornillador", "estufa", "microscopio"], correctIndex: 1 },
+{ id: "An_10_11_04", block: "An", age: "10_11", difficulty: 4, question: "Memoria es a recordar como imaginación es a ________", options: ["crear", "romper", "contar", "pesar"], correctIndex: 0 },
+{ id: "An_10_11_05", block: "An", age: "10_11", difficulty: 4, question: "Hacha es a cortar como lupa es a ________", options: ["brillar", "ampliar", "reciclar", "adornar"], correctIndex: 1 },
+{ id: "An_10_11_06", block: "An", age: "10_11", difficulty: 5, question: "Metal es a herrero como pan es a ________", options: ["florero", "cocinero", "astronauta", "químico"], correctIndex: 1 },
+{ id: "An_10_11_07", block: "An", age: "10_11", difficulty: 5, question: "Aguja es a coser como tiza es a ________", options: ["pintar", "escribir", "limpiar", "saltar"], correctIndex: 1 },
+{ id: "An_10_11_08", block: "An", age: "10_11", difficulty: 5, question: "Página es a libro como pista es a ________", options: ["martillo", "canción", "rascacielos", "teclado"], correctIndex: 1 },
+{ id: "An_10_11_09", block: "An", age: "10_11", difficulty: 5, question: "Piano es a teclas como violín es a ________", options: ["arco", "rueda", "pantalla", "semilla"], correctIndex: 0 },
+{ id: "An_10_11_10", block: "An", age: "10_11", difficulty: 5, question: "Oxígeno es a respirar como luz es a ________", options: ["vestir", "ver", "romper", "correr"], correctIndex: 1 },
+{ id: "An_10_11_11", block: "An", age: "10_11", difficulty: 6, question: "Fuego es a calor como hielo es a ________", options: ["frío", "eco", "arena", "metal"], correctIndex: 0 },
+{ id: "An_10_11_12", block: "An", age: "10_11", difficulty: 6, question: "Científico es a laboratorio como médico es a ________", options: ["teclado", "hospital", "montaña", "estadio"], correctIndex: 1 },
+{ id: "An_10_11_13", block: "An", age: "10_11", difficulty: 6, question: "Luna es a noche como sol es a ________", options: ["frío", "tarde", "día", "cueva"], correctIndex: 2 },
+{ id: "An_10_11_14", block: "An", age: "10_11", difficulty: 6, question: "Redactor es a periódico como programador es a ________", options: ["medicina", "software", "papel", "cloro"], correctIndex: 1 },
+{ id: "An_10_11_15", block: "An", age: "10_11", difficulty: 6, question: "Guía es a mapa como navegador es a ________", options: ["techo", "GPS", "silla", "vaso"], correctIndex: 1 },
+{ id: "An_10_11_16", block: "An", age: "10_11", difficulty: 6, question: "Fractura es a hueso como quemadura es a ________", options: ["arena", "plancha", "piel", "barco"], correctIndex: 2 },
+{ id: "An_10_11_17", block: "An", age: "10_11", difficulty: 6, question: "Caja es a contener como ventana es a ________", options: ["ordenar", "ver", "toser", "crecer"], correctIndex: 1 },
+{ id: "An_10_11_18", block: "An", age: "10_11", difficulty: 6, question: "Libro es a conocimiento como microscopio es a ________", options: ["lupa", "visión", "martillo", "sonido"], correctIndex: 1 },
+{ id: "An_10_11_19", block: "An", age: "10_11", difficulty: 6, question: "Código es a programar como ecuación es a ________", options: ["meditar", "calcular", "armar", "restar"], correctIndex: 1 },
+{ id: "An_10_11_20", block: "An", age: "10_11", difficulty: 6, question: "Profesor es a aula como piloto es a ________", options: ["cabina", "prado", "escalera", "fuego"], correctIndex: 0 },
+{ id: "An_12_16_01", block: "An", age: "12_16", difficulty: 6, question: "Función es a matemática como algoritmo es a ________", options: ["computación", "astronomía", "cerámica", "trigo"], correctIndex: 0 },
+{ id: "An_12_16_02", block: "An", age: "12_16", difficulty: 6, question: "Protón es a átomo como píxel es a ________", options: ["película", "imagen", "cable", "aguja"], correctIndex: 1 },
+{ id: "An_12_16_03", block: "An", age: "12_16", difficulty: 6, question: "Médico es a diagnóstico como ingeniero es a ________", options: ["diseño", "peinar", "etiquetar", "pastorear"], correctIndex: 0 },
+{ id: "An_12_16_04", block: "An", age: "12_16", difficulty: 6, question: "Velocidad es a distancia como densidad es a ________", options: ["música", "masa", "puente", "arena"], correctIndex: 1 },
+{ id: "An_12_16_05", block: "An", age: "12_16", difficulty: 6, question: "Teoría es a ciencia como ley es a ________", options: ["rutina", "norma", "abanico", "galaxia"], correctIndex: 1 },
+{ id: "An_12_16_06", block: "An", age: "12_16", difficulty: 7, question: "Fibra es a internet como combustible es a ________", options: ["ave", "automóvil", "cuchillo", "planta"], correctIndex: 1 },
+{ id: "An_12_16_07", block: "An", age: "12_16", difficulty: 7, question: "Software es a ordenador como ADN es a ________", options: ["célula", "tinta", "bocina", "lampara"], correctIndex: 0 },
+{ id: "An_12_16_08", block: "An", age: "12_16", difficulty: 7, question: "Gravedad es a caída como fricción es a ________", options: ["congelar", "roce", "volar", "hablar"], correctIndex: 1 },
+{ id: "An_12_16_09", block: "An", age: "12_16", difficulty: 7, question: "Filtros son a fotografía como ecuaciones son a ________", options: ["mecánica", "bolsa", "cálculo", "vidrio"], correctIndex: 2 },
+{ id: "An_12_16_10", block: "An", age: "12_16", difficulty: 7, question: "Teclado es a escribir como simulador es a ________", options: ["complementar", "analizar", "jugar", "leer"], correctIndex: 1 },
+{ id: "An_12_16_11", block: "An", age: "12_16", difficulty: 8, question: "Palanca es a fuerza como engranaje es a ________", options: ["rotación", "temperatura", "paisaje", "río"], correctIndex: 0 },
+{ id: "An_12_16_12", block: "An", age: "12_16", difficulty: 8, question: "Neurona es a cerebro como transistor es a ________", options: ["impresora", "zapato", "computadora", "papel"], correctIndex: 2 },
+{ id: "An_12_16_13", block: "An", age: "12_16", difficulty: 8, question: "Resonancia es a sonido como refracción es a ________", options: ["olor", "madera", "luz", "torniquete"], correctIndex: 2 },
+{ id: "An_12_16_14", block: "An", age: "12_16", difficulty: 8, question: "Analista es a datos como geólogo es a ________", options: ["rocas", "ondas", "teclas", "lentejas"], correctIndex: 0 },
+{ id: "An_12_16_15", block: "An", age: "12_16", difficulty: 8, question: "Enlace es a química como circuito es a ________", options: ["deporte", "electricidad", "loro", "música"], correctIndex: 1 },
+{ id: "An_12_16_16", block: "An", age: "12_16", difficulty: 8, question: "Oxígeno es a combustión como torque es a ________", options: ["futbol", "rotación", "aire", "jardín"], correctIndex: 1 },
+{ id: "An_12_16_17", block: "An", age: "12_16", difficulty: 8, question: "Pinnado es a redes como cifrado es a ________", options: ["seguridad", "colores", "huellas", "metales"], correctIndex: 0 },
+{ id: "An_12_16_18", block: "An", age: "12_16", difficulty: 8, question: "Licencia es a conducir como clave es a ________", options: ["dormir", "desbloquear", "sembrar", "nadar"], correctIndex: 1 },
+{ id: "An_12_16_19", block: "An", age: "12_16", difficulty: 8, question: "Holograma es a proyección como avatar es a ________", options: ["representación", "comida", "velocidad", "tiza"], correctIndex: 0 },
+{ id: "An_12_16_20", block: "An", age: "12_16", difficulty: 8, question: "Virus es a biología como malware es a ________", options: ["física", "danza", "informática", "ecología"], correctIndex: 2 },
+{ id: "An_17_94_01", block: "An", age: "17_94", difficulty: 7, question: "Modelo es a predicción como evidencia es a ________", options: ["comunicación", "verificación", "escultura", "velocidad"], correctIndex: 1 },
+{ id: "An_17_94_02", block: "An", age: "17_94", difficulty: 7, question: "Teoría es a explicación como algoritmo es a ________", options: ["orden", "compilación", "cálculo", "vasija"], correctIndex: 2 },
+{ id: "An_17_94_03", block: "An", age: "17_94", difficulty: 7, question: "Datos son a análisis como síntomas son a ________", options: ["diagnóstico", "hard-reset", "pintura", "latitud"], correctIndex: 0 },
+{ id: "An_17_94_04", block: "An", age: "17_94", difficulty: 7, question: "Variable es a física como parámetro es a ________", options: ["estudiante", "estadística", "picante", "textura"], correctIndex: 1 },
+{ id: "An_17_94_05", block: "An", age: "17_94", difficulty: 7, question: "Simulación es a experimento como maqueta es a ________", options: ["edificio", "espuma", "arte", "libro"], correctIndex: 0 },
+{ id: "An_17_94_06", block: "An", age: "17_94", difficulty: 8, question: "Neurona es a memoria como transistor es a ________", options: ["madera", "computación", "papel", "teatro"], correctIndex: 1 },
+{ id: "An_17_94_07", block: "An", age: "17_94", difficulty: 8, question: "Célula es a organismo como pixel es a ________", options: ["registro", "imagen", "aluminio", "espora"], correctIndex: 1 },
+{ id: "An_17_94_08", block: "An", age: "17_94", difficulty: 8, question: "Fuerza es a movimiento como voltaje es a ________", options: ["corriente", "barrido", "ensayo", "desierto"], correctIndex: 0 },
+{ id: "An_17_94_09", block: "An", age: "17_94", difficulty: 8, question: "Muestreo es a población como encuesta es a ________", options: ["pestaña", "madera", "opinión", "agujero"], correctIndex: 2 },
+{ id: "An_17_94_10", block: "An", age: "17_94", difficulty: 8, question: "Energía es a trabajo como información es a ________", options: ["ruido", "conocimiento", "tinta", "polvo"], correctIndex: 1 },
+{ id: "An_17_94_11", block: "An", age: "17_94", difficulty: 9, question: "Correlación es a asociación como causalidad es a ________", options: ["efecto", "imagen", "fermento", "borrador"], correctIndex: 0 },
+{ id: "An_17_94_12", block: "An", age: "17_94", difficulty: 9, question: "Seguridad es a cifrado como privacidad es a ________", options: ["minería", "protección", "retrato", "metabolismo"], correctIndex: 1 },
+{ id: "An_17_94_13", block: "An", age: "17_94", difficulty: 9, question: "Sesgo es a error como precisión es a ________", options: ["carpeta", "claridad", "rodillo", "ruido"], correctIndex: 1 },
+{ id: "An_17_94_14", block: "An", age: "17_94", difficulty: 9, question: "Entropía es a desorden como robustez es a ________", options: ["estabilidad", "martillo", "tela", "peñasco"], correctIndex: 0 },
+{ id: "An_17_94_15", block: "An", age: "17_94", difficulty: 9, question: "Predicción es a futuro como memoria es a ________", options: ["invento", "pasado", "juguete", "validez"], correctIndex: 1 },
+{ id: "An_17_94_16", block: "An", age: "17_94", difficulty: 9, question: "Red es a nodos como comunidad es a ________", options: ["miembros", "troncos", "hierbas", "dormitorios"], correctIndex: 0 },
+{ id: "An_17_94_17", block: "An", age: "17_94", difficulty: 9, question: "Optimización es a eficiencia como reducción es a ________", options: ["energía", "consumo", "ruido", "plástico"], correctIndex: 1 },
+{ id: "An_17_94_18", block: "An", age: "17_94", difficulty: 9, question: "Variable es a incertidumbre como axioma es a ________", options: ["certeza", "video", "sombra", "voluntad"], correctIndex: 0 },
+{ id: "An_17_94_19", block: "An", age: "17_94", difficulty: 9, question: "Modelo es a simplificación como prototipo es a ________", options: ["prueba", "martillo", "carbohidrato", "pluma"], correctIndex: 0 },
+{ id: "An_17_94_20", block: "An", age: "17_94", difficulty: 9, question: "Software es a automatizar como estadística es a ________", options: ["inferir", "hornear", "barrer", "vocalizar"], correctIndex: 0 },
+{ id: "Ca_3_5_01", block: "Ca", age: "3_5", difficulty: 1, question: "Marca el que NO pertenece al grupo: ________", options: ["bicicleta", "gato", "león", "pollo"], correctIndex: 0 },
+{ id: "Ca_3_5_02", block: "Ca", age: "3_5", difficulty: 1, question: "Marca el que NO pertenece al grupo: ________", options: ["manzana", "sartén", "plátano", "pera"], correctIndex: 1 },
+{ id: "Ca_3_5_03", block: "Ca", age: "3_5", difficulty: 1, question: "Marca el que NO pertenece al grupo: ________", options: ["coche", "autobús", "cebolla", "moto"], correctIndex: 2 },
+{ id: "Ca_3_5_04", block: "Ca", age: "3_5", difficulty: 1, question: "Marca el que NO pertenece al grupo: ________", options: ["cama", "mesa", "silla", "gorra"], correctIndex: 3 },
+{ id: "Ca_3_5_05", block: "Ca", age: "3_5", difficulty: 1, question: "Marca el que NO pertenece al grupo: ________", options: ["medias", "tenedor", "cuchillo", "cuchara"], correctIndex: 0 },
+{ id: "Ca_3_5_06", block: "Ca", age: "3_5", difficulty: 2, question: "Marca el que NO pertenece al grupo: ________", options: ["pantalón", "camiseta", "zanahoria", "abrigo"], correctIndex: 2 },
+{ id: "Ca_3_5_07", block: "Ca", age: "3_5", difficulty: 2, question: "Marca el que NO pertenece al grupo: ________", options: ["avión", "barco", "camión", "helado"], correctIndex: 3 },
+{ id: "Ca_3_5_08", block: "Ca", age: "3_5", difficulty: 2, question: "Marca el que NO pertenece al grupo: ________", options: ["queso", "escoba", "yogur", "leche"], correctIndex: 1 },
+{ id: "Ca_3_5_09", block: "Ca", age: "3_5", difficulty: 2, question: "Marca el que NO pertenece al grupo: ________", options: ["zapato", "bota", "plato", "chancla"], correctIndex: 2 },
+{ id: "Ca_3_5_10", block: "Ca", age: "3_5", difficulty: 2, question: "Marca el que NO pertenece al grupo: ________", options: ["elefante", "oso", "tigre", "taza"], correctIndex: 3 },
+{ id: "Ca_3_5_11", block: "Ca", age: "3_5", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["martillo", "manzana", "serrucho", "destornillador"], correctIndex: 1 },
+{ id: "Ca_3_5_12", block: "Ca", age: "3_5", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["perro", "agua", "zumo", "refresco"], correctIndex: 0 },
+{ id: "Ca_3_5_13", block: "Ca", age: "3_5", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["fresa", "kiwi", "naranja", "tornillo"], correctIndex: 3 },
+{ id: "Ca_3_5_14", block: "Ca", age: "3_5", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["lápiz", "rotulador", "pan", "goma"], correctIndex: 2 },
+{ id: "Ca_3_5_15", block: "Ca", age: "3_5", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["helado", "martillo", "chocolate", "donut"], correctIndex: 1 },
+{ id: "Ca_3_5_16", block: "Ca", age: "3_5", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["perro", "pez", "puerta", "ave"], correctIndex: 2 },
+{ id: "Ca_3_5_17", block: "Ca", age: "3_5", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["limón", "cepillo", "peine", "tijeras"], correctIndex: 0 },
+{ id: "Ca_3_5_18", block: "Ca", age: "3_5", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["falda", "vestido", "pijama", "coche"], correctIndex: 3 },
+{ id: "Ca_3_5_19", block: "Ca", age: "3_5", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["plátano", "tenedor", "mango", "cereza"], correctIndex: 1 },
+{ id: "Ca_3_5_20", block: "Ca", age: "3_5", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["café", "leche", "camisa", "agua"], correctIndex: 2 },
+{ id: "Ca_6_7_01", block: "Ca", age: "6_7", difficulty: 2, question: "Marca el que NO pertenece al grupo: ________", options: ["león", "tigre", "manzana", "elefante"], correctIndex: 2 },
+{ id: "Ca_6_7_02", block: "Ca", age: "6_7", difficulty: 2, question: "Marca el que NO pertenece al grupo: ________", options: ["lechuga", "mesa", "silla", "sofá"], correctIndex: 0 },
+{ id: "Ca_6_7_03", block: "Ca", age: "6_7", difficulty: 2, question: "Marca el que NO pertenece al grupo: ________", options: ["avión", "martillo", "barco", "bicicleta"], correctIndex: 1 },
+{ id: "Ca_6_7_04", block: "Ca", age: "6_7", difficulty: 2, question: "Marca el que NO pertenece al grupo: ________", options: ["queso", "huevo", "jamón", "regla"], correctIndex: 3 },
+{ id: "Ca_6_7_05", block: "Ca", age: "6_7", difficulty: 2, question: "Marca el que NO pertenece al grupo: ________", options: ["cartera", "monedero", "microondas", "bolso"], correctIndex: 2 },
+{ id: "Ca_6_7_06", block: "Ca", age: "6_7", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["teclado", "gato", "loro", "caballo"], correctIndex: 0 },
+{ id: "Ca_6_7_07", block: "Ca", age: "6_7", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["pantalón", "pincel", "abrigo", "falda"], correctIndex: 1 },
+{ id: "Ca_6_7_08", block: "Ca", age: "6_7", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["kiwi", "uva", "sandía", "martillo"], correctIndex: 3 },
+{ id: "Ca_6_7_09", block: "Ca", age: "6_7", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["cuchillo", "tenedor", "calculadora", "cuchara"], correctIndex: 2 },
+{ id: "Ca_6_7_10", block: "Ca", age: "6_7", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["velero", "hospital", "yate", "lancha"], correctIndex: 1 },
+{ id: "Ca_6_7_11", block: "Ca", age: "6_7", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["martillo", "dado", "baraja", "ajedrez"], correctIndex: 0 },
+{ id: "Ca_6_7_12", block: "Ca", age: "6_7", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["cuerda", "balón", "raqueta", "pato"], correctIndex: 3 },
+{ id: "Ca_6_7_13", block: "Ca", age: "6_7", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["jirafa", "cebra", "tractor", "llama"], correctIndex: 2 },
+{ id: "Ca_6_7_14", block: "Ca", age: "6_7", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["ensalada", "tenis", "baloncesto", "fútbol"], correctIndex: 0 },
+{ id: "Ca_6_7_15", block: "Ca", age: "6_7", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["televisor", "tablet", "ordenador", "sopa"], correctIndex: 3 },
+{ id: "Ca_6_7_16", block: "Ca", age: "6_7", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["diamante", "zapatilla", "oro", "platino"], correctIndex: 1 },
+{ id: "Ca_6_7_17", block: "Ca", age: "6_7", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["serrucho", "martillo", "cuchara", "destornillador"], correctIndex: 2 },
+{ id: "Ca_6_7_18", block: "Ca", age: "6_7", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["manzana", "foca", "orca", "delfín"], correctIndex: 0 },
+{ id: "Ca_6_7_19", block: "Ca", age: "6_7", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["hospital", "farmacia", "clínica", "furgoneta"], correctIndex: 3 },
+{ id: "Ca_6_7_20", block: "Ca", age: "6_7", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["nuez", "biberón", "almendra", "pistacho"], correctIndex: 1 },
+{ id: "Ca_8_9_01", block: "Ca", age: "8_9", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["camisa", "mate", "suma", "resta"], correctIndex: 0 },
+{ id: "Ca_8_9_02", block: "Ca", age: "8_9", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["luna", "libro", "estrella", "planeta"], correctIndex: 1 },
+{ id: "Ca_8_9_03", block: "Ca", age: "8_9", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["lápiz", "estufa", "goma", "rotulador"], correctIndex: 1 },
+{ id: "Ca_8_9_04", block: "Ca", age: "8_9", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["maceta", "martillo", "destornillador", "serrucho"], correctIndex: 0 },
+{ id: "Ca_8_9_05", block: "Ca", age: "8_9", difficulty: 3, question: "Marca el que NO pertenece al grupo: ________", options: ["mesa", "herramienta", "silla", "sofá"], correctIndex: 1 },
+{ id: "Ca_8_9_06", block: "Ca", age: "8_9", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["fresa", "sardina", "manzana", "pera"], correctIndex: 1 },
+{ id: "Ca_8_9_07", block: "Ca", age: "8_9", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["fruta", "carne", "pescado", "verdura"], correctIndex: 0 },
+{ id: "Ca_8_9_08", block: "Ca", age: "8_9", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["medir", "dormir", "pesar", "contar"], correctIndex: 1 },
+{ id: "Ca_8_9_09", block: "Ca", age: "8_9", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["perro", "clima", "lluvia", "nieve"], correctIndex: 0 },
+{ id: "Ca_8_9_10", block: "Ca", age: "8_9", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["rojo", "azul", "árbol", "amarillo"], correctIndex: 2 },
+{ id: "Ca_8_9_11", block: "Ca", age: "8_9", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["tenedor", "hotel", "hostal", "camping"], correctIndex: 0 },
+{ id: "Ca_8_9_12", block: "Ca", age: "8_9", difficulty: 5, question: "Marca el que NO pertenece al grupo: ________", options: ["balanza", "regla", "ventana", "termómetro"], correctIndex: 2 },
+{ id: "Ca_8_9_13", block: "Ca", age: "8_9", difficulty: 5, question: "Marca el que NO pertenece al grupo: ________", options: ["hospital", "microscopio", "clínica", "ambulancia"], correctIndex: 1 },
+{ id: "Ca_8_9_14", block: "Ca", age: "8_9", difficulty: 5, question: "Marca el que NO pertenece al grupo: ________", options: ["guitarra", "circulo", "cuadrado", "triángulo"], correctIndex: 0 },
+{ id: "Ca_8_9_15", block: "Ca", age: "8_9", difficulty: 5, question: "Marca el que NO pertenece al grupo: ________", options: ["limpiar", "barrer", "volar", "aspirar"], correctIndex: 2 },
+{ id: "Ca_8_9_16", block: "Ca", age: "8_9", difficulty: 5, question: "Marca el que NO pertenece al grupo: ________", options: ["tigre", "flor", "león", "pantera"], correctIndex: 1 },
+{ id: "Ca_8_9_17", block: "Ca", age: "8_9", difficulty: 5, question: "Marca el que NO pertenece al grupo: ________", options: ["grifo", "emisora", "ducha", "bañera"], correctIndex: 1 },
+{ id: "Ca_8_9_18", block: "Ca", age: "8_9", difficulty: 5, question: "Marca el que NO pertenece al grupo: ________", options: ["linterna", "pastel", "galleta", "helado"], correctIndex: 0 },
+{ id: "Ca_8_9_19", block: "Ca", age: "8_9", difficulty: 5, question: "Marca el que NO pertenece al grupo: ________", options: ["museo", "papelera", "galería", "teatro"], correctIndex: 1 },
+{ id: "Ca_8_9_20", block: "Ca", age: "8_9", difficulty: 5, question: "Marca el que NO pertenece al grupo: ________", options: ["baloncesto", "tenis", "regla", "fútbol"], correctIndex: 2 },
+{ id: "Ca_10_11_01", block: "Ca", age: "10_11", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["cuchillo", "fuerza", "masa", "velocidad"], correctIndex: 0 },
+{ id: "Ca_10_11_02", block: "Ca", age: "10_11", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["método", "teoría", "manzana", "hipótesis"], correctIndex: 2 },
+{ id: "Ca_10_11_03", block: "Ca", age: "10_11", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["balanza", "termómetro", "cosechadora", "regla"], correctIndex: 2 },
+{ id: "Ca_10_11_04", block: "Ca", age: "10_11", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["virus", "silla", "bacteria", "hongo"], correctIndex: 1 },
+{ id: "Ca_10_11_05", block: "Ca", age: "10_11", difficulty: 4, question: "Marca el que NO pertenece al grupo: ________", options: ["limonada", "datos", "estadística", "medición"], correctIndex: 0 },
+{ id: "Ca_10_11_06", block: "Ca", age: "10_11", difficulty: 5, question: "Marca el que NO pertenece al grupo: ________", options: ["triángulo", "cuadrado", "micrófono", "círculo"], correctIndex: 2 },
+{ id: "Ca_10_11_07", block: "Ca", age: "10_11", difficulty: 5, question: "Marca el que NO pertenece al grupo: ________", options: ["hospital", "metal", "madera", "plástico"], correctIndex: 0 },
+{ id: "Ca_10_11_08", block: "Ca", age: "10_11", difficulty: 5, question: "Marca el que NO pertenece al grupo: ________", options: ["poeta", "pintor", "fontanero", "compositor"], correctIndex: 2 },
+{ id: "Ca_10_11_09", block: "Ca", age: "10_11", difficulty: 5, question: "Marca el que NO pertenece al grupo: ________", options: ["cafeína", "fricción", "gravedad", "magnetismo"], correctIndex: 0 },
+{ id: "Ca_10_11_10", block: "Ca", age: "10_11", difficulty: 5, question: "Marca el que NO pertenece al grupo: ________", options: ["tomate", "pera", "inglés", "manzana"], correctIndex: 2 },
+{ id: "Ca_10_11_11", block: "Ca", age: "10_11", difficulty: 5, question: "Marca el que NO pertenece al grupo: ________", options: ["sartén", "sierra", "martillo", "destornillador"], correctIndex: 0 },
+{ id: "Ca_10_11_12", block: "Ca", age: "10_11", difficulty: 6, question: "Marca el que NO pertenece al grupo: ________", options: ["teclado", "taladro", "pantalla", "altavoz"], correctIndex: 1 },
+{ id: "Ca_10_11_13", block: "Ca", age: "10_11", difficulty: 6, question: "Marca el que NO pertenece al grupo: ________", options: ["hígado", "escalera", "pulmón", "corazón"], correctIndex: 1 },
+{ id: "Ca_10_11_14", block: "Ca", age: "10_11", difficulty: 6, question: "Marca el que NO pertenece al grupo: ________", options: ["documental", "comedia", "drama", "pincho"], correctIndex: 3 },
+{ id: "Ca_10_11_15", block: "Ca", age: "10_11", difficulty: 6, question: "Marca el que NO pertenece al grupo: ________", options: ["ecuación", "calendario", "teorema", "problema"], correctIndex: 1 },
+{ id: "Ca_10_11_16", block: "Ca", age: "10_11", difficulty: 6, question: "Marca el que NO pertenece al grupo: ________", options: ["metales", "estanque", "no metales", "gases nobles"], correctIndex: 1 },
+{ id: "Ca_10_11_17", block: "Ca", age: "10_11", difficulty: 6, question: "Marca el que NO pertenece al grupo: ________", options: ["everest", "kilimanjaro", "microondas", "alpes"], correctIndex: 2 },
+{ id: "Ca_10_11_18", block: "Ca", age: "10_11", difficulty: 6, question: "Marca el que NO pertenece al grupo: ________", options: ["semáforo", "célula", "tejido", "órgano"], correctIndex: 0 },
+{ id: "Ca_10_11_19", block: "Ca", age: "10_11", difficulty: 6, question: "Marca el que NO pertenece al grupo: ________", options: ["sólido", "gaseoso", "caldeado", "líquido"], correctIndex: 2 },
+{ id: "Ca_10_11_20", block: "Ca", age: "10_11", difficulty: 6, question: "Marca el que NO pertenece al grupo: ________", options: ["condensación", "evaporación", "política", "congelación"], correctIndex: 2 },
+{ id: "Ca_12_16_01", block: "Ca", age: "12_16", difficulty: 6, question: "Marca el que NO pertenece al grupo: ________", options: ["hipótesis", "teoría", "galleta", "ley"], correctIndex: 2 },
+{ id: "Ca_12_16_02", block: "Ca", age: "12_16", difficulty: 6, question: "Marca el que NO pertenece al grupo: ________", options: ["vaso", "neutrón", "protón", "electrón"], correctIndex: 0 },
+{ id: "Ca_12_16_03", block: "Ca", age: "12_16", difficulty: 6, question: "Marca el que NO pertenece al grupo: ________", options: ["algoritmo", "cepillo", "código", "base de datos"], correctIndex: 1 },
+{ id: "Ca_12_16_04", block: "Ca", age: "12_16", difficulty: 6, question: "Marca el que NO pertenece al grupo: ________", options: ["rotación", "combustión", "traslación", "revolución"], correctIndex: 1 },
+{ id: "Ca_12_16_05", block: "Ca", age: "12_16", difficulty: 6, question: "Marca el que NO pertenece al grupo: ________", options: ["manguera", "clave", "cifrado", "contraseña"], correctIndex: 0 },
+{ id: "Ca_12_16_06", block: "Ca", age: "12_16", difficulty: 7, question: "Marca el que NO pertenece al grupo: ________", options: ["masa", "densidad", "volumen", "calentador"], correctIndex: 3 },
+{ id: "Ca_12_16_07", block: "Ca", age: "12_16", difficulty: 7, question: "Marca el que NO pertenece al grupo: ________", options: ["dato", "melaza", "estadística", "análisis"], correctIndex: 1 },
+{ id: "Ca_12_16_08", block: "Ca", age: "12_16", difficulty: 7, question: "Marca el que NO pertenece al grupo: ________", options: ["función", "variable", "espejo", "parámetro"], correctIndex: 2 },
+{ id: "Ca_12_16_09", block: "Ca", age: "12_16", difficulty: 7, question: "Marca el que NO pertenece al grupo: ________", options: ["aspirina", "tensión", "corriente", "resistencia"], correctIndex: 0 },
+{ id: "Ca_12_16_10", block: "Ca", age: "12_16", difficulty: 7, question: "Marca el que NO pertenece al grupo: ________", options: ["célula", "ladrillo", "tejido", "órgano"], correctIndex: 1 },
+{ id: "Ca_12_16_11", block: "Ca", age: "12_16", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["alfabeto", "consonante", "vocal", "píxel"], correctIndex: 3 },
+{ id: "Ca_12_16_12", block: "Ca", age: "12_16", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["metáfora", "latitud", "símil", "hipérbole"], correctIndex: 1 },
+{ id: "Ca_12_16_13", block: "Ca", age: "12_16", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["mecánica", "óptica", "mermelada", "termodinámica"], correctIndex: 2 },
+{ id: "Ca_12_16_14", block: "Ca", age: "12_16", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["semáforo", "binario", "decimal", "hexadecimal"], correctIndex: 0 },
+{ id: "Ca_12_16_15", block: "Ca", age: "12_16", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["oxidación", "combustión", "película", "corrosión"], correctIndex: 2 },
+{ id: "Ca_12_16_16", block: "Ca", age: "12_16", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["red", "topología", "lágrima", "protocolo"], correctIndex: 2 },
+{ id: "Ca_12_16_17", block: "Ca", age: "12_16", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["vector", "rastrillo", "escalar", "fuerza"], correctIndex: 1 },
+{ id: "Ca_12_16_18", block: "Ca", age: "12_16", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["argumento", "cuchara", "premisa", "conclusión"], correctIndex: 1 },
+{ id: "Ca_12_16_19", block: "Ca", age: "12_16", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["probabilidad", "muestreo", "castillo", "varianza"], correctIndex: 2 },
+{ id: "Ca_12_16_20", block: "Ca", age: "12_16", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["radiador", "gene", "adn", "cromosoma"], correctIndex: 0 },
+{ id: "Ca_17_94_01", block: "Ca", age: "17_94", difficulty: 7, question: "Marca el que NO pertenece al grupo: ________", options: ["tenedor", "axioma", "postulado", "definición"], correctIndex: 0 },
+{ id: "Ca_17_94_02", block: "Ca", age: "17_94", difficulty: 7, question: "Marca el que NO pertenece al grupo: ________", options: ["correlación", "collar", "regresión", "cluster"], correctIndex: 1 },
+{ id: "Ca_17_94_03", block: "Ca", age: "17_94", difficulty: 7, question: "Marca el que NO pertenece al grupo: ________", options: ["paradoja", "contradicción", "bicicleta", "tautología"], correctIndex: 2 },
+{ id: "Ca_17_94_04", block: "Ca", age: "17_94", difficulty: 7, question: "Marca el que NO pertenece al grupo: ________", options: ["balón", "deducción", "inducción", "abducción"], correctIndex: 0 },
+{ id: "Ca_17_94_05", block: "Ca", age: "17_94", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["átomo", "novela", "molécula", "compuesto"], correctIndex: 1 },
+{ id: "Ca_17_94_06", block: "Ca", age: "17_94", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["pianista", "procesador", "memoria", "placa base"], correctIndex: 0 },
+{ id: "Ca_17_94_07", block: "Ca", age: "17_94", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["criptografía", "seguridad", "lavadora", "cifrado"], correctIndex: 2 },
+{ id: "Ca_17_94_08", block: "Ca", age: "17_94", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["neuronas", "tijeras", "sinapsis", "axones"], correctIndex: 1 },
+{ id: "Ca_17_94_09", block: "Ca", age: "17_94", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["derivada", "integral", "collarín", "función"], correctIndex: 2 },
+{ id: "Ca_17_94_10", block: "Ca", age: "17_94", difficulty: 8, question: "Marca el que NO pertenece al grupo: ________", options: ["maletín", "entropía", "temperatura", "energía"], correctIndex: 0 },
+{ id: "Ca_17_94_11", block: "Ca", age: "17_94", difficulty: 9, question: "Marca el que NO pertenece al grupo: ________", options: ["binario", "booleano", "pescado", "conjunto"], correctIndex: 2 },
+{ id: "Ca_17_94_12", block: "Ca", age: "17_94", difficulty: 9, question: "Marca el que NO pertenece al grupo: ________", options: ["modelo", "simulación", "avalancha", "prototipo"], correctIndex: 2 },
+{ id: "Ca_17_94_13", block: "Ca", age: "17_94", difficulty: 9, question: "Marca el que NO pertenece al grupo: ________", options: ["peluca", "conductividad", "resistencia", "calor específico"], correctIndex: 0 },
+{ id: "Ca_17_94_14", block: "Ca", age: "17_94", difficulty: 9, question: "Marca el que NO pertenece al grupo: ________", options: ["inferencia", "argumento", "ensalada", "heurística"], correctIndex: 2 },
+{ id: "Ca_17_94_15", block: "Ca", age: "17_94", difficulty: 9, question: "Marca el que NO pertenece al grupo: ________", options: ["fresa", "red", "topología", "ruta"], correctIndex: 0 },
+{ id: "Ca_17_94_16", block: "Ca", age: "17_94", difficulty: 9, question: "Marca el que NO pertenece al grupo: ________", options: ["teorema", "ventana", "lema", "demostración"], correctIndex: 1 },
+{ id: "Ca_17_94_17", block: "Ca", age: "17_94", difficulty: 9, question: "Marca el que NO pertenece al grupo: ________", options: ["hipérbole", "proteína", "metáfora", "aliteración"], correctIndex: 1 },
+{ id: "Ca_17_94_18", block: "Ca", age: "17_94", difficulty: 9, question: "Marca el que NO pertenece al grupo: ________", options: ["helado", "iteración", "recursión", "bucle"], correctIndex: 0 },
+{ id: "Ca_17_94_19", block: "Ca", age: "17_94", difficulty: 9, question: "Marca el que NO pertenece al grupo: ________", options: ["teclado", "experimento", "observación", "medición"], correctIndex: 0 },
+{ id: "Ca_17_94_20", block: "Ca", age: "17_94", difficulty: 9, question: "Marca el que NO pertenece al grupo: ________", options: ["probabilidad", "distribución", "jirafa", "mediana"], correctIndex: 2 },
+{ id: "Fi_3_5_01", block: "Fi", age: "3_5", difficulty: 1, question: "Perro, gato, pájaro. ¿Qué son todos?", options: ["Frutas", "Animales", "Vehículos", "Muebles"], correctIndex: 1 },
+{ id: "Fi_3_5_02", block: "Fi", age: "3_5", difficulty: 1, question: "Manzana, plátano, naranja. ¿Qué son?", options: ["Comida", "Ropa", "Frutas", "Juguetes"], correctIndex: 2 },
+{ id: "Fi_3_5_03", block: "Fi", age: "3_5", difficulty: 2, question: "Rojo, azul, verde. ¿Qué categoría es?", options: ["Colores", "Animales", "Meses", "Ropa"], correctIndex: 0 },
+{ id: "Fi_3_5_04", block: "Fi", age: "3_5", difficulty: 2, question: "Camisa, pantalón, abrigo. ¿Qué son?", options: ["Ropa", "Muebles", "Frutas", "Vehículos"], correctIndex: 0 },
+{ id: "Fi_3_5_05", block: "Fi", age: "3_5", difficulty: 3, question: "Leche, zumo, agua. ¿Qué son?", options: ["Postres", "Bebidas", "Helados", "Quesos"], correctIndex: 1 },
+{ id: "Mv_3_5_01", block: "Mv", age: "3_5", difficulty: 1, question: "sol, luna, nube | ¿Cuál de estas palabras estaba en la lista?", options: ["estrella", "nube", "árbol", "flor"], correctIndex: 1 },
+{ id: "Mv_3_5_02", block: "Mv", age: "3_5", difficulty: 1, question: "gato, perro, pez | ¿Qué animal iba en segundo lugar?", options: ["gato", "perro", "pez", "pájaro"], correctIndex: 1 },
+{ id: "Mv_3_5_03", block: "Mv", age: "3_5", difficulty: 1, question: "rojo, azul, verde | ¿Cuál es la secuencia correcta?", options: ["rojo, azul, verde", "azul, verde, rojo", "verde, rojo, azul", "rojo, verde, azul"], correctIndex: 0 },
+{ id: "Mv_3_5_04", block: "Mv", age: "3_5", difficulty: 1, question: "coche, tren, avión | ¿Cuál de estos estaba en la lista?", options: ["barco", "avión", "moto", "bicicleta"], correctIndex: 1 },
+{ id: "Mv_3_5_05", block: "Mv", age: "3_5", difficulty: 1, question: "mesa, silla, cama | ¿Qué palabra estaba en primer lugar?", options: ["mesa", "silla", "cama", "sofá"], correctIndex: 0 },
+{ id: "Mv_3_5_06", block: "Mv", age: "3_5", difficulty: 1, question: "fresa, plátano, manzana | ¿Cuál NO estaba en la lista?", options: ["fresa", "manzana", "plátano", "naranja"], correctIndex: 3 },
+{ id: "Mv_3_5_07", block: "Mv", age: "3_5", difficulty: 1, question: "pelota, muñeca, coche | ¿Qué palabra estaba en la lista?", options: ["robot", "pelota", "tren", "camión"], correctIndex: 1 },
+{ id: "Mv_3_5_08", block: "Mv", age: "3_5", difficulty: 1, question: "pato, rana, pez | ¿Qué animal era el último?", options: ["pato", "rana", "pez", "gato"], correctIndex: 2 },
+{ id: "Mv_3_5_09", block: "Mv", age: "3_5", difficulty: 1, question: "leche, agua, zumo | ¿Qué bebida iba en segundo lugar?", options: ["leche", "agua", "zumo", "batido"], correctIndex: 1 },
+{ id: "Mv_3_5_10", block: "Mv", age: "3_5", difficulty: 1, question: "camión, coche, moto | ¿Cuál de estas NO estaba en la lista?", options: ["camión", "coche", "moto", "tractor"], correctIndex: 3 },
+{ id: "Mv_6_7_01", block: "Mv", age: "6_7", difficulty: 2, question: "sol, nube, lluvia, viento | ¿Cuál de estas palabras estaba en la lista?", options: ["trueno", "lluvia", "frío", "tierra"], correctIndex: 1 },
+{ id: "Mv_6_7_02", block: "Mv", age: "6_7", difficulty: 2, question: "árbol, flor, hoja, rama | ¿Qué palabra iba en tercer lugar?", options: ["árbol", "flor", "hoja", "rama"], correctIndex: 2 },
+{ id: "Mv_6_7_03", block: "Mv", age: "6_7", difficulty: 2, question: "perro, gato, conejo, tortuga | ¿Cuál NO estaba en la lista?", options: ["pez", "conejo", "gato", "tortuga"], correctIndex: 0 },
+{ id: "Mv_6_7_04", block: "Mv", age: "6_7", difficulty: 2, question: "taza, plato, cuchara, vaso | ¿Cuál de estos estaba en la lista?", options: ["tenedor", "vaso", "jarra", "bol"], correctIndex: 1 },
+{ id: "Mv_6_7_05", block: "Mv", age: "6_7", difficulty: 2, question: "rojo, azul, verde, amarillo | ¿Cuál iba en segundo lugar?", options: ["rojo", "azul", "verde", "amarillo"], correctIndex: 1 },
+{ id: "Mv_6_7_06", block: "Mv", age: "6_7", difficulty: 2, question: "tren, coche, avión, barco | ¿Cuál era el último?", options: ["coche", "avión", "barco", "tren"], correctIndex: 2 },
+{ id: "Mv_6_7_07", block: "Mv", age: "6_7", difficulty: 2, question: "montaña, río, lago, playa | ¿Cuál de estas NO estaba en la lista?", options: ["mar", "río", "montaña", "playa"], correctIndex: 0 },
+{ id: "Mv_6_7_08", block: "Mv", age: "6_7", difficulty: 2, question: "música, baile, canto, ritmo | ¿Cuál iba en primer lugar?", options: ["música", "baile", "canto", "ritmo"], correctIndex: 0 },
+{ id: "Mv_6_7_09", block: "Mv", age: "6_7", difficulty: 2, question: "pera, manzana, plátano, uva | ¿Cuál era la tercera palabra?", options: ["pera", "manzana", "plátano", "uva"], correctIndex: 2 },
+{ id: "Mv_6_7_10", block: "Mv", age: "6_7", difficulty: 2, question: "lápiz, goma, regla, sacapuntas | ¿Cuál de estos NO estaba en la lista?", options: ["rotulador", "regla", "goma", "lápiz"], correctIndex: 0 },
+{ id: "Mv_6_7_11", block: "Mv", age: "6_7", difficulty: 2, question: "ciervo, caballo, vaca, oveja | ¿Cuál de estos estaba en la lista?", options: ["perro", "caballo", "jirafa", "avestruz"], correctIndex: 1 },
+{ id: "Mv_6_7_12", block: "Mv", age: "6_7", difficulty: 2, question: "verano, otoño, invierno, primavera | ¿Qué estación iba en segundo lugar?", options: ["verano", "otoño", "invierno", "primavera"], correctIndex: 1 },
+{ id: "Mv_6_7_13", block: "Mv", age: "6_7", difficulty: 2, question: "cama, mesa, silla, armario | ¿Cuál era la cuarta palabra?", options: ["cama", "mesa", "silla", "armario"], correctIndex: 3 },
+{ id: "Mv_6_7_14", block: "Mv", age: "6_7", difficulty: 2, question: "pepino, tomate, zanahoria, lechuga | ¿Cuál NO estaba en la lista?", options: ["cereza", "zanahoria", "pepino", "tomate"], correctIndex: 0 },
+{ id: "Mv_6_7_15", block: "Mv", age: "6_7", difficulty: 2, question: "peine, jabón, toalla, champú | ¿Cuál de estos estaba en la lista?", options: ["crema", "toalla", "cepillo", "desodorante"], correctIndex: 1 },
+{ id: "Mv_6_7_16", block: "Mv", age: "6_7", difficulty: 2, question: "pescado, carne, arroz, pasta | ¿Qué alimento iba en primer lugar?", options: ["pescado", "carne", "arroz", "pasta"], correctIndex: 0 },
+{ id: "Mv_6_7_17", block: "Mv", age: "6_7", difficulty: 2, question: "rueda, motor, puerta, asiento | ¿Cuál era la tercera palabra?", options: ["rueda", "motor", "puerta", "asiento"], correctIndex: 2 },
+{ id: "Mv_6_7_18", block: "Mv", age: "6_7", difficulty: 2, question: "tierra, marte, venus, júpiter | ¿Cuál de estos estaba en la lista?", options: ["saturno", "júpiter", "neptuno", "mercurio"], correctIndex: 1 },
+{ id: "Mv_6_7_19", block: "Mv", age: "6_7", difficulty: 2, question: "rosa, violeta, azul, turquesa | ¿Cuál de estas NO estaba en la lista?", options: ["rojo", "azul", "violeta", "rosa"], correctIndex: 0 },
+{ id: "Mv_6_7_20", block: "Mv", age: "6_7", difficulty: 2, question: "cuadro, foto, cartel, póster | ¿Qué palabra iba en segundo lugar?", options: ["cuadro", "foto", "cartel", "póster"], correctIndex: 1 },
+{ id: "Mv_8_9_01", block: "Mv", age: "8_9", difficulty: 3, question: "libro, cuaderno, lápiz, estuche | ¿Cuál de estos NO estaba en la lista?", options: ["regla", "cuaderno", "libro", "lápiz"], correctIndex: 0 },
+{ id: "Mv_8_9_02", block: "Mv", age: "8_9", difficulty: 3, question: "lobo, zorro, gato, oso | ¿Qué animal iba en último lugar?", options: ["lobo", "zorro", "gato", "oso"], correctIndex: 3 },
+{ id: "Mv_8_9_03", block: "Mv", age: "8_9", difficulty: 3, question: "rojo, verde, azul, blanco | ¿Cuál era la segunda palabra?", options: ["rojo", "verde", "azul", "blanco"], correctIndex: 1 },
+{ id: "Mv_8_9_04", block: "Mv", age: "8_9", difficulty: 3, question: "mar, río, lago, océano | ¿Cuál de estos estaba en la lista?", options: ["océano", "pozo", "arena", "catarata"], correctIndex: 0 },
+{ id: "Mv_8_9_05", block: "Mv", age: "8_9", difficulty: 3, question: "mesa, silla, armario, espejo | ¿Cuál NO estaba en la lista?", options: ["sofá", "silla", "mesa", "armario"], correctIndex: 0 },
+{ id: "Mv_8_9_06", block: "Mv", age: "8_9", difficulty: 3, question: "juan, ana, lucas, sara | ¿Quién aparecía en tercer lugar?", options: ["juan", "ana", "lucas", "sara"], correctIndex: 2 },
+{ id: "Mv_8_9_07", block: "Mv", age: "8_9", difficulty: 3, question: "piano, guitarra, tambor, flauta | ¿Cuál instrumento iba en segundo lugar?", options: ["piano", "guitarra", "tambor", "flauta"], correctIndex: 1 },
+{ id: "Mv_8_9_08", block: "Mv", age: "8_9", difficulty: 3, question: "mango, piña, melón, sandía | ¿Cuál de estos estaba en la lista?", options: ["pera", "melón", "kiwi", "manzana"], correctIndex: 1 },
+{ id: "Mv_8_9_09", block: "Mv", age: "8_9", difficulty: 3, question: "roca, arena, tierra, arcilla | ¿Cuál de estos NO estaba en la lista?", options: ["tiza", "tierra", "arena", "roca"], correctIndex: 0 },
+{ id: "Mv_8_9_10", block: "Mv", age: "8_9", difficulty: 3, question: "hoja, flor, tallo, raíz | ¿Qué parte de la planta iba en último lugar?", options: ["hoja", "flor", "tallo", "raíz"], correctIndex: 3 },
+{ id: "Mv_8_9_11", block: "Mv", age: "8_9", difficulty: 3, question: "lápiz, regla, compás, goma | ¿Cuál iba en primer lugar?", options: ["lápiz", "regla", "compás", "goma"], correctIndex: 0 },
+{ id: "Mv_8_9_12", block: "Mv", age: "8_9", difficulty: 3, question: "caballo, burro, vaca, cerdo | ¿Qué animal NO estaba en la lista?", options: ["oveja", "caballo", "vaca", "burro"], correctIndex: 0 },
+{ id: "Mv_8_9_13", block: "Mv", age: "8_9", difficulty: 3, question: "cuadro, póster, mural, fotografía | ¿Cuál de estos estaba en la lista?", options: ["cómic", "mural", "periódico", "revista"], correctIndex: 1 },
+{ id: "Mv_8_9_14", block: "Mv", age: "8_9", difficulty: 3, question: "mariposa, hormiga, abeja, araña | ¿Qué insecto estaba en tercer lugar?", options: ["mariposa", "hormiga", "abeja", "araña"], correctIndex: 2 },
+{ id: "Mv_8_9_15", block: "Mv", age: "8_9", difficulty: 3, question: "fuego, humo, ceniza, chispa | ¿Cuál NO aparece en la secuencia?", options: ["fuego", "ceniza", "chispa", "agua"], correctIndex: 3 },
+{ id: "Mv_8_9_16", block: "Mv", age: "8_9", difficulty: 3, question: "torre, puente, túnel, carretera | ¿Cuál iba en segundo lugar?", options: ["torre", "puente", "túnel", "carretera"], correctIndex: 1 },
+{ id: "Mv_8_9_17", block: "Mv", age: "8_9", difficulty: 3, question: "ruido, silencio, eco, música | ¿Cuál de estas palabras estaba en la lista?", options: ["eco", "grito", "trino", "chirrido"], correctIndex: 0 },
+{ id: "Mv_8_9_18", block: "Mv", age: "8_9", difficulty: 3, question: "pluma, tinta, papel, sobre | ¿Cuál era la tercera palabra?", options: ["pluma", "tinta", "papel", "sobre"], correctIndex: 2 },
+{ id: "Mv_8_9_19", block: "Mv", age: "8_9", difficulty: 3, question: "árbol, montaña, pradera, río | ¿Cuál NO estaba en la lista?", options: ["lago", "pradera", "montaña", "árbol"], correctIndex: 0 },
+{ id: "Mv_8_9_20", block: "Mv", age: "8_9", difficulty: 3, question: "corona, espada, escudo, castillo | ¿Qué objeto aparecía en segundo lugar?", options: ["corona", "espada", "escudo", "castillo"], correctIndex: 1 },
+{ id: "Mv_10_11_01", block: "Mv", age: "10_11", difficulty: 4, question: "cobre, hierro, plata, oro, níquel | ¿Cuál era la tercera palabra?", options: ["cobre", "hierro", "plata", "oro"], correctIndex: 2 },
+{ id: "Mv_10_11_02", block: "Mv", age: "10_11", difficulty: 4, question: "planeta, estrella, galaxia, nebulosa, asteroide | ¿Cuál de estos estaba en la lista?", options: ["asteroide", "cometa", "satélite", "quásar"], correctIndex: 0 },
+{ id: "Mv_10_11_03", block: "Mv", age: "10_11", difficulty: 4, question: "triángulo, círculo, cuadrado, rectángulo, rombo | ¿Cuál era la segunda palabra?", options: ["triángulo", "círculo", "cuadrado", "rombo"], correctIndex: 1 },
+{ id: "Mv_10_11_04", block: "Mv", age: "10_11", difficulty: 4, question: "nitrógeno, oxígeno, helio, carbono, azufre | ¿Qué elemento iba en cuarto lugar?", options: ["nitrógeno", "oxígeno", "carbono", "helio"], correctIndex: 2 },
+{ id: "Mv_10_11_05", block: "Mv", age: "10_11", difficulty: 4, question: "fósforo, calcio, sodio, potasio, magnesio | ¿Cuál NO estaba en la lista?", options: ["cloro", "magnesio", "sodio", "calcio"], correctIndex: 0 },
+{ id: "Mv_10_11_06", block: "Mv", age: "10_11", difficulty: 4, question: "reino, filo, clase, orden, familia | ¿Cuál era la primera palabra?", options: ["reino", "filo", "clase", "orden"], correctIndex: 0 },
+{ id: "Mv_10_11_07", block: "Mv", age: "10_11", difficulty: 4, question: "ecosistema, especie, población, comunidad, bioma | ¿Qué palabra iba en segundo lugar?", options: ["ecosistema", "especie", "población", "comunidad"], correctIndex: 1 },
+{ id: "Mv_10_11_08", block: "Mv", age: "10_11", difficulty: 4, question: "montaña, valle, río, lago, pradera | ¿Cuál de estas NO estaba en la lista?", options: ["mar", "río", "valle", "montaña"], correctIndex: 0 },
+{ id: "Mv_10_11_09", block: "Mv", age: "10_11", difficulty: 4, question: "pulso, presión, temperatura, ritmo, latido | ¿Cuál era la cuarta palabra?", options: ["pulso", "presión", "ritmo", "latido"], correctIndex: 2 },
+{ id: "Mv_10_11_10", block: "Mv", age: "10_11", difficulty: 4, question: "química, física, biología, geología, astronomía | ¿Qué materia iba en quinto lugar?", options: ["química", "física", "geología", "astronomía"], correctIndex: 3 },
+{ id: "Mv_10_11_11", block: "Mv", age: "10_11", difficulty: 4, question: "latitud, longitud, altitud, coordenada, mapa | ¿Cuál de estos estaba en la lista?", options: ["longitud", "paralelo", "meridiano", "escala"], correctIndex: 0 },
+{ id: "Mv_10_11_12", block: "Mv", age: "10_11", difficulty: 4, question: "verbo, adjetivo, sustantivo, adverbio, pronombre | ¿Cuál era la cuarta palabra?", options: ["verbo", "adverbio", "pronombre", "adjetivo"], correctIndex: 1 },
+{ id: "Mv_10_11_13", block: "Mv", age: "10_11", difficulty: 4, question: "algodón, lana, seda, lino, terciopelo | ¿Cuál NO estaba en la lista?", options: ["poliéster", "algodón", "lino", "lana"], correctIndex: 0 },
+{ id: "Mv_10_11_14", block: "Mv", age: "10_11", difficulty: 4, question: "comida, energía, nutriente, digestión, metabolismo | ¿Cuál era la segunda palabra?", options: ["comida", "energía", "nutriente", "metabolismo"], correctIndex: 1 },
+{ id: "Mv_10_11_15", block: "Mv", age: "10_11", difficulty: 4, question: "árbol, arbusto, flor, raíz, semilla | ¿Cuál era la última palabra?", options: ["árbol", "raíz", "semilla", "arbusto"], correctIndex: 2 },
+{ id: "Mv_10_11_16", block: "Mv", age: "10_11", difficulty: 4, question: "ángulo, recta, punto, segmento, plano | ¿Cuál de estos NO estaba en la lista?", options: ["diámetro", "ángulo", "recta", "punto"], correctIndex: 0 },
+{ id: "Mv_10_11_17", block: "Mv", age: "10_11", difficulty: 4, question: "tigre, leopardo, puma, pantera, jaguar | ¿Cuál iba en tercer lugar?", options: ["tigre", "leopardo", "puma", "pantera"], correctIndex: 2 },
+{ id: "Mv_10_11_18", block: "Mv", age: "10_11", difficulty: 4, question: "novela, cuento, relato, fábula, leyenda | ¿Cuál era la primera palabra?", options: ["novela", "fábula", "cuento", "relato"], correctIndex: 0 },
+{ id: "Mv_10_11_19", block: "Mv", age: "10_11", difficulty: 4, question: "teclado, pantalla, ratón, monitor, procesador | ¿Cuál NO estaba en la lista?", options: ["altavoz", "monitor", "teclado", "procesador"], correctIndex: 0 },
+{ id: "Mv_10_11_20", block: "Mv", age: "10_11", difficulty: 4, question: "cobre, aluminio, zinc, plata, plomo | ¿Cuál era la segunda palabra?", options: ["cobre", "aluminio", "zinc", "plata"], correctIndex: 1 },
+{ id: "Mv_12_16_01", block: "Mv", age: "12_16", difficulty: 5, question: "átomo, molécula, compuesto, mezcla, elemento, solución | ¿Cuál era la cuarta palabra?", options: ["átomo", "molécula", "mezcla", "compuesto"], correctIndex: 2 },
+{ id: "Mv_12_16_02", block: "Mv", age: "12_16", difficulty: 5, question: "emoción, motivación, conducta, cognición, percepción, memoria | ¿Cuál NO estaba en la lista?", options: ["atención", "cognición", "memoria", "percepción"], correctIndex: 0 },
+{ id: "Mv_12_16_03", block: "Mv", age: "12_16", difficulty: 5, question: "latitud, longitud, altitud, meridiano, paralelo, coordenada | ¿Cuál iba en segundo lugar?", options: ["latitud", "longitud", "altitud", "paralelo"], correctIndex: 1 },
+{ id: "Mv_12_16_04", block: "Mv", age: "12_16", difficulty: 5, question: "ecosistema, bioma, población, comunidad, especie, territorio | ¿Cuál era la última palabra?", options: ["especie", "comunidad", "territorio", "población"], correctIndex: 2 },
+{ id: "Mv_12_16_05", block: "Mv", age: "12_16", difficulty: 5, question: "derivada, integral, límite, función, variable, parámetro | ¿Qué palabra iba en tercer lugar?", options: ["derivada", "integral", "límite", "variable"], correctIndex: 2 },
+{ id: "Mv_12_16_06", block: "Mv", age: "12_16", difficulty: 5, question: "oxidación, reducción, combustión, corrosión, reacción, energía | ¿Cuál de estas estaba en la lista?", options: ["oxidación", "absorción", "fusión", "evaporación"], correctIndex: 0 },
+{ id: "Mv_12_16_07", block: "Mv", age: "12_16", difficulty: 5, question: "programación, algoritmo, variable, constante, estructura, parámetro | ¿Cuál era la quinta palabra?", options: ["algoritmo", "constante", "variable", "estructura"], correctIndex: 3 },
+{ id: "Mv_12_16_08", block: "Mv", age: "12_16", difficulty: 5, question: "hipérbole, metáfora, ironía, símil, alegoría, paradoja | ¿Cuál NO estaba en la lista?", options: ["elipsis", "metáfora", "paradoja", "alegoría"], correctIndex: 0 },
+{ id: "Mv_12_16_09", block: "Mv", age: "12_16", difficulty: 5, question: "comedia, tragedia, drama, sátira, epopeya, farsa | ¿Cuál iba en cuarto lugar?", options: ["comedia", "tragedia", "drama", "sátira"], correctIndex: 3 },
+{ id: "Mv_12_16_10", block: "Mv", age: "12_16", difficulty: 5, question: "archivo, carpeta, servidor, protocolo, paquete, conexión | ¿Cuál era la primera palabra?", options: ["archivo", "protocolo", "carpeta", "servidor"], correctIndex: 0 },
+{ id: "Mv_12_16_11", block: "Mv", age: "12_16", difficulty: 5, question: "hormona, enzima, proteína, lípido, glucosa, vitamina | ¿Cuál NO estaba en la lista?", options: ["aminoácido", "enzima", "lípido", "glucosa"], correctIndex: 0 },
+{ id: "Mv_12_16_12", block: "Mv", age: "12_16", difficulty: 5, question: "presión, volumen, temperatura, densidad, masa, energía | ¿Cuál era la cuarta palabra?", options: ["presión", "volumen", "temperatura", "densidad"], correctIndex: 3 },
+{ id: "Mv_12_16_13", block: "Mv", age: "12_16", difficulty: 5, question: "neuronas, axones, dendritas, sinapsis, neurotransmisores, receptores | ¿Cuál era la segunda palabra?", options: ["receptores", "axones", "neuronas", "sinapsis"], correctIndex: 1 },
+{ id: "Mv_12_16_14", block: "Mv", age: "12_16", difficulty: 5, question: "elegía, soneto, oda, epigrama, sátira, fábula | ¿Cuál NO estaba en la lista?", options: ["haiku", "oda", "elegía", "fábula"], correctIndex: 0 },
+{ id: "Mv_12_16_15", block: "Mv", age: "12_16", difficulty: 5, question: "mecánica, óptica, acústica, termodinámica, electricidad, magnetismo | ¿Cuál era la tercera palabra?", options: ["mecánica", "óptica", "acústica", "magnetismo"], correctIndex: 2 },
+{ id: "Mv_12_16_16", block: "Mv", age: "12_16", difficulty: 5, question: "memoria, atención, percepción, razonamiento, lenguaje, cálculo | ¿Cuál de estas estaba en la lista?", options: ["percepción", "emoción", "aptitud", "pensamiento"], correctIndex: 0 },
+{ id: "Mv_12_16_17", block: "Mv", age: "12_16", difficulty: 5, question: "novela, cuento, ensayo, biografía, crónica, discurso | ¿Cuál ocupaba el tercer lugar?", options: ["novela", "cuento", "ensayo", "crónica"], correctIndex: 2 },
+{ id: "Mv_12_16_18", block: "Mv", age: "12_16", difficulty: 5, question: "ángulo, recta, plano, vector, matriz, función | ¿Cuál de estos NO estaba en la lista?", options: ["determinante", "plano", "vector", "ángulo"], correctIndex: 0 },
+{ id: "Mv_12_16_19", block: "Mv", age: "12_16", difficulty: 5, question: "euclides, pitágoras, arquímedes, newton, gauss, euler | ¿Cuál iba en quinto lugar?", options: ["arquímedes", "newton", "gauss", "euler"], correctIndex: 2 },
+{ id: "Mv_12_16_20", block: "Mv", age: "12_16", difficulty: 5, question: "computación, hardware, software, algoritmo, dato, programa | ¿Cuál era la secuencia correcta?", options: ["computación, hardware, software, algoritmo, dato, programa", "hardware, computación, software, programa, algoritmo, dato", "computación, software, hardware, algoritmo, dato, programa", "computación, software, programa, dato, hardware, algoritmo"], correctIndex: 0 },
+{ id: "Mv_17_94_01", block: "Mv", age: "17_94", difficulty: 6, question: "axioma, teorema, demostración, hipótesis, proposición, corolario, definición | ¿Cuál era la quinta palabra?", options: ["hipótesis", "proposición", "corolario", "definición"], correctIndex: 1 },
+{ id: "Mv_17_94_02", block: "Mv", age: "17_94", difficulty: 6, question: "entropía, energía, temperatura, presión, volumen, estado, equilibrio | ¿Cuál iba en tercer lugar?", options: ["entropía", "energía", "temperatura", "presión"], correctIndex: 2 },
+{ id: "Mv_17_94_03", block: "Mv", age: "17_94", difficulty: 6, question: "neuronas, axones, dendritas, sinapsis, neurotransmisores, receptores, soma | ¿Cuál NO estaba en la lista?", options: ["glía", "axones", "soma", "receptores"], correctIndex: 0 },
+{ id: "Mv_17_94_04", block: "Mv", age: "17_94", difficulty: 6, question: "romanticismo, realismo, modernismo, simbolismo, vanguardismo, naturalismo, expresionismo | ¿Cuál de estos estaba en la lista?", options: ["modernismo", "surrealismo", "futurismo", "minimalismo"], correctIndex: 0 },
+{ id: "Mv_17_94_05", block: "Mv", age: "17_94", difficulty: 6, question: "teoría, modelo, hipótesis, evidencia, predicción, análisis, interpretación | ¿Cuál era la cuarta palabra?", options: ["modelo", "hipótesis", "evidencia", "predicción"], correctIndex: 2 },
+{ id: "Mv_17_94_06", block: "Mv", age: "17_94", difficulty: 6, question: "paradoja, inferencia, deducción, inducción, abducción, argumento, premisa | ¿Cuál NO estaba en la lista?", options: ["silogismo", "inferencia", "inducción", "premisa"], correctIndex: 0 },
+{ id: "Mv_17_94_07", block: "Mv", age: "17_94", difficulty: 6, question: "varianza, media, mediana, moda, desviación, distribución, rango | ¿Cuál iba en sexto lugar?", options: ["desviación", "distribución", "rango", "mediana"], correctIndex: 1 },
+{ id: "Mv_17_94_08", block: "Mv", age: "17_94", difficulty: 6, question: "archivo, carpeta, base de datos, servidor, protocolo, paquete, cifrado | ¿Cuál era la tercera palabra?", options: ["archivo", "carpeta", "base de datos", "servidor"], correctIndex: 2 },
+{ id: "Mv_17_94_09", block: "Mv", age: "17_94", difficulty: 6, question: "metáfora, antítesis, hipérbole, sinécdoque, ironía, aliteración, elipsis | ¿Cuál NO estaba en la lista?", options: ["paradoja", "aliteración", "hipérbole", "elipsis"], correctIndex: 0 },
+{ id: "Mv_17_94_10", block: "Mv", age: "17_94", difficulty: 6, question: "nación, estado, gobierno, constitución, ciudadanía, territorio, soberanía | ¿Cuál de estos estaba en la lista?", options: ["estado", "patrimonio", "reglamento", "provincia"], correctIndex: 0 },
+{ id: "Mv_17_94_11", block: "Mv", age: "17_94", difficulty: 6, question: "potencia, energía, fuerza, trabajo, movimiento, impulso, velocidad | ¿Cuál era la última palabra?", options: ["velocidad", "impulso", "movimiento", "trabajo"], correctIndex: 0 },
+{ id: "Mv_17_94_12", block: "Mv", age: "17_94", difficulty: 6, question: "célula, tejido, órgano, sistema, organismo, población, bioma | ¿Cuál NO estaba en la lista?", options: ["ecosistema", "tejido", "órgano", "población"], correctIndex: 0 },
+{ id: "Mv_17_94_13", block: "Mv", age: "17_94", difficulty: 6, question: "retórica, dialéctica, semiótica, hermenéutica, pragmática, lógica, sintaxis | ¿Cuál iba en cuarto lugar?", options: ["semiótica", "hermenéutica", "pragmática", "lógica"], correctIndex: 1 },
+{ id: "Mv_17_94_14", block: "Mv", age: "17_94", difficulty: 6, question: "poesía, novela, ensayo, crónica, manifiesto, discurso, tratado | ¿Cuál era la secuencia correcta?", options: ["poesía, novela, ensayo, crónica, manifiesto, discurso, tratado", "novela, poesía, ensayo, manifiesto, crónica, tratado, discurso", "poesía, ensayo, novela, crónica, discurso, tratado, manifiesto", "poesía, novela, tratado, crónica, ensayo, manifiesto, discurso"], correctIndex: 0 },
+{ id: "Mv_17_94_15", block: "Mv", age: "17_94", difficulty: 6, question: "análisis, síntesis, crítica, argumento, evidencia, conclusión, revisión | ¿Cuál iba en segundo lugar?", options: ["análisis", "síntesis", "argumento", "crítica"], correctIndex: 1 },
+{ id: "Mv_17_94_16", block: "Mv", age: "17_94", difficulty: 6, question: "adaptación, selección, mutación, especiación, variación, deriva, recombinación | ¿Cuál NO estaba en la lista?", options: ["simbiosis", "deriva", "variación", "mutación"], correctIndex: 0 },
+{ id: "Mv_17_94_17", block: "Mv", age: "17_94", difficulty: 6, question: "aritmética, álgebra, geometría, trigonometría, cálculo, estadística, probabilidad | ¿Cuál era la quinta palabra?", options: ["álgebra", "geometría", "cálculo", "estadística"], correctIndex: 2 },
+{ id: "Mv_17_94_18", block: "Mv", age: "17_94", difficulty: 6, question: "capital, trabajo, mercado, precio, oferta, demanda, inflación | ¿Cuál iba en tercer lugar?", options: ["capital", "trabajo", "mercado", "precio"], correctIndex: 2 },
+{ id: "Mv_17_94_19", block: "Mv", age: "17_94", difficulty: 6, question: "microscopio, célula, tejido, órgano, sistema, organismo, ecosistema | ¿Cuál es la secuencia correcta?", options: ["microscopio, célula, tejido, órgano, sistema, organismo, ecosistema", "célula, microscopio, tejido, sistema, órgano, organismo, ecosistema", "microscopio, tejido, célula, órgano, organismo, sistema, ecosistema", "célula, tejido, órgano, sistema, organismo, ecosistema, microscopio"], correctIndex: 0 },
+{ id: "Mv_17_94_20", block: "Mv", age: "17_94", difficulty: 6, question: "oxígeno, hidrógeno, carbono, nitrógeno, helio, neón, argón | ¿Cuál de estos estaba en la lista?", options: ["neón", "kriptón", "mercurio", "cloro"], correctIndex: 0 },
+{ id: "Mnv_3_5_01", block: "Mnv", age: "3_5", difficulty: 1, question: "⬜⬜⬜\n⬜⬛⬜\n⬜⬜⬜ | ¿Cuál es igual al patrón?", options: ["⬛⬜⬜\n⬜⬜⬜\n⬜⬜⬜", "⬜⬜⬜\n⬜⬛⬜\n⬜⬜⬜", "⬜⬜⬛\n⬜⬜⬜\n⬜⬜⬜", "⬜⬜⬜\n⬛⬜⬜\n⬜⬜⬜"], correctIndex: 1 },
+{ id: "Mnv_3_5_02", block: "Mnv", age: "3_5", difficulty: 1, question: "⬛⬜⬜\n⬜⬜⬜\n⬜⬜⬜ | ¿Cuál es igual al patrón?", options: ["⬜⬛⬜\n⬜⬜⬜\n⬜⬜⬜", "⬜⬜⬜\n⬜⬜⬜\n⬜⬛⬜", "⬛⬜⬜\n⬜⬜⬜\n⬜⬜⬜", "⬜⬜⬛\n⬜⬜⬜\n⬜⬜⬜"], correctIndex: 2 },
+{ id: "Mnv_3_5_03", block: "Mnv", age: "3_5", difficulty: 1, question: "⬜⬜⬛\n⬜⬜⬜\n⬜⬜⬜ | ¿Cuál es igual al patrón?", options: ["⬜⬜⬜\n⬛⬜⬜\n⬜⬜⬜", "⬜⬜⬛\n⬜⬜⬜\n⬜⬜⬜", "⬜⬜⬜\n⬜⬛⬜\n⬜⬜⬜", "⬛⬜⬜\n⬜⬜⬜\n⬜⬜⬜"], correctIndex: 1 },
+{ id: "Mnv_3_5_04", block: "Mnv", age: "3_5", difficulty: 1, question: "⬜⬜⬜\n⬜⬜⬜\n⬛⬜⬜ | ¿Cuál es igual al patrón?", options: ["⬜⬜⬜\n⬜⬛⬜\n⬜⬜⬜", "⬜⬜⬛\n⬜⬜⬜\n⬜⬜⬜", "⬜⬜⬜\n⬜⬜⬜\n⬛⬜⬜", "⬛⬜⬜\n⬜⬜⬜\n⬜⬜⬜"], correctIndex: 2 },
+{ id: "Mnv_3_5_05", block: "Mnv", age: "3_5", difficulty: 1, question: "⬜⬜⬜\n⬜⬜⬜\n⬜⬜⬛ | ¿Cuál es igual al patrón?", options: ["⬜⬜⬜\n⬜⬛⬜\n⬜⬜⬜", "⬛⬜⬜\n⬜⬜⬜\n⬜⬜⬜", "⬜⬜⬜\n⬜⬜⬜\n⬜⬜⬛", "⬜⬜⬛\n⬜⬜⬜\n⬜⬜⬜"], correctIndex: 2 },
+{ id: "Mnv_3_5_06", block: "Mnv", age: "3_5", difficulty: 1, question: "⬛⬛⬛\n⬜⬜⬜\n⬜⬜⬜ | ¿Cuál es igual al patrón?", options: ["⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜", "⬜⬜⬜\n⬜⬜⬜\n⬛⬛⬛", "⬛⬛⬛\n⬜⬜⬜\n⬜⬜⬜", "⬛⬜⬛\n⬜⬜⬜\n⬜⬜⬜"], correctIndex: 2 },
+{ id: "Mnv_3_5_07", block: "Mnv", age: "3_5", difficulty: 1, question: "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜ | ¿Cuál es igual al patrón?", options: ["⬛⬛⬛\n⬜⬜⬜\n⬜⬜⬜", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜", "⬜⬜⬜\n⬜⬜⬜\n⬛⬛⬛", "⬛⬜⬛\n⬜⬜⬜\n⬜⬜⬜"], correctIndex: 1 },
+{ id: "Mnv_3_5_08", block: "Mnv", age: "3_5", difficulty: 1, question: "⬜⬜⬜\n⬜⬜⬜\n⬛⬛⬛ | ¿Cuál es igual al patrón?", options: ["⬛⬛⬛\n⬜⬜⬜\n⬜⬜⬜", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜", "⬜⬜⬜\n⬜⬜⬜\n⬛⬛⬛", "⬛⬜⬛\n⬜⬜⬜\n⬜⬜⬜"], correctIndex: 2 },
+{ id: "Mnv_3_5_09", block: "Mnv", age: "3_5", difficulty: 1, question: "⬛⬜⬛\n⬜⬜⬜\n⬜⬜⬜ | ¿Cuál es igual al patrón?", options: ["⬜⬛⬜\n⬜⬜⬜\n⬜⬜⬜", "⬜⬜⬛\n⬜⬜⬜\n⬜⬜⬜", "⬛⬜⬜\n⬜⬜⬜\n⬜⬜⬜", "⬛⬜⬛\n⬜⬜⬜\n⬜⬜⬜"], correctIndex: 3 },
+{ id: "Mnv_3_5_10", block: "Mnv", age: "3_5", difficulty: 1, question: "⬜⬜⬜\n⬜⬛⬜\n⬜⬛⬜ | ¿Cuál es igual al patrón?", options: ["⬜⬛⬜\n⬜⬜⬜\n⬜⬜⬜", "⬜⬜⬜\n⬜⬛⬜\n⬜⬜⬜", "⬛⬜⬛\n⬜⬜⬜\n⬜⬜⬜", "⬜⬜⬜\n⬜⬛⬜\n⬜⬛⬜"], correctIndex: 3 },
+{ id: "Mnv_6_7_01", block: "Mnv", age: "6_7", difficulty: 2, question: "⬛⬜⬛\n⬜⬜⬜\n⬛⬜⬛ | ¿Cuál es igual al patrón?", options: ["⬛⬜⬜\n⬜⬜⬛\n⬛⬜⬜", "⬛⬜⬛\n⬜⬜⬜\n⬛⬜⬛", "⬜⬛⬜\n⬜⬜⬜\n⬜⬛⬜", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜"], correctIndex: 1 },
+{ id: "Mnv_6_7_02", block: "Mnv", age: "6_7", difficulty: 2, question: "⬜⬛⬜\n⬛⬜⬛\n⬜⬛⬜ | ¿Cuál es igual al patrón?", options: ["⬜⬛⬜\n⬛⬜⬛\n⬜⬛⬜", "⬛⬜⬛\n⬜⬛⬜\n⬛⬜⬛", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜", "⬜⬛⬜\n⬜⬜⬜\n⬜⬛⬜"], correctIndex: 0 },
+{ id: "Mnv_6_7_03", block: "Mnv", age: "6_7", difficulty: 2, question: "⬛⬛⬜\n⬜⬜⬜\n⬜⬛⬛ | ¿Cuál es igual al patrón?", options: ["⬜⬛⬛\n⬜⬜⬜\n⬛⬛⬜", "⬛⬛⬜\n⬜⬜⬜\n⬜⬛⬛", "⬛⬜⬛\n⬜⬜⬜\n⬛⬜⬛", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜"], correctIndex: 1 },
+{ id: "Mnv_6_7_04", block: "Mnv", age: "6_7", difficulty: 2, question: "⬛⬜⬜\n⬜⬛⬜\n⬜⬜⬛ | ¿Cuál es igual al patrón?", options: ["⬛⬜⬜\n⬜⬛⬜\n⬜⬜⬛", "⬜⬜⬛\n⬜⬛⬜\n⬛⬜⬜", "⬛⬛⬜\n⬜⬜⬜\n⬜⬜⬛", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜"], correctIndex: 0 },
+{ id: "Mnv_6_7_05", block: "Mnv", age: "6_7", difficulty: 2, question: "⬛⬜⬛\n⬛⬜⬛\n⬜⬜⬜ | ¿Cuál es igual al patrón?", options: ["⬛⬜⬛\n⬛⬜⬛\n⬜⬜⬜", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜", "⬛⬛⬜\n⬜⬜⬜\n⬜⬛⬛", "⬛⬜⬛\n⬜⬜⬜\n⬛⬜⬛"], correctIndex: 0 },
+{ id: "Mnv_6_7_06", block: "Mnv", age: "6_7", difficulty: 2, question: "⬜⬛⬜\n⬜⬛⬜\n⬜⬛⬜ | ¿Cuál es igual al patrón?", options: ["⬜⬛⬜\n⬜⬛⬜\n⬜⬛⬜", "⬛⬜⬛\n⬜⬜⬜\n⬛⬜⬛", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜", "⬜⬜⬜\n⬜⬜⬜\n⬛⬛⬛"], correctIndex: 0 },
+{ id: "Mnv_6_7_07", block: "Mnv", age: "6_7", difficulty: 2, question: "⬛⬜⬜\n⬛⬜⬜\n⬛⬜⬜ | ¿Cuál es igual al patrón?", options: ["⬛⬜⬜\n⬛⬜⬜\n⬛⬜⬜", "⬜⬛⬜\n⬜⬛⬜\n⬜⬛⬜", "⬜⬜⬛\n⬜⬜⬛\n⬜⬜⬛", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜"], correctIndex: 0 },
+{ id: "Mnv_6_7_08", block: "Mnv", age: "6_7", difficulty: 2, question: "⬜⬜⬛\n⬜⬛⬜\n⬛⬜⬜ | ¿Cuál es igual al patrón?", options: ["⬜⬜⬛\n⬜⬛⬜\n⬛⬜⬜", "⬛⬜⬜\n⬜⬛⬜\n⬜⬜⬛", "⬜⬛⬜\n⬜⬜⬜\n⬜⬛⬜", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜"], correctIndex: 0 },
+{ id: "Mnv_6_7_09", block: "Mnv", age: "6_7", difficulty: 2, question: "⬛⬜⬛\n⬜⬛⬜\n⬛⬜⬛ | ¿Cuál es igual al patrón?", options: ["⬜⬛⬜\n⬛⬜⬛\n⬜⬛⬜", "⬛⬜⬛\n⬜⬛⬜\n⬛⬜⬛", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜", "⬛⬜⬛\n⬜⬛⬜\n⬛⬜⬛"], correctIndex: 1 },
+{ id: "Mnv_6_7_10", block: "Mnv", age: "6_7", difficulty: 2, question: "⬜⬛⬜\n⬛⬜⬛\n⬛⬜⬛ | ¿Cuál es igual al patrón?", options: ["⬛⬜⬛\n⬜⬛⬜\n⬛⬜⬛", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜", "⬜⬛⬜\n⬛⬜⬛\n⬛⬜⬛", "⬜⬛⬜\n⬛⬜⬛\n⬜⬛⬜"], correctIndex: 2 },
+{ id: "Mnv_8_9_01", block: "Mnv", age: "8_9", difficulty: 3, question: "⬜⬛⬜\n⬛⬤⬜\n⬜⬜⬛ | ¿Cuál es igual al patrón?", options: ["⬜⬛⬜\n⬜⬤⬛\n⬛⬜⬜", "⬜⬛⬜\n⬛⬤⬜\n⬜⬜⬛", "⬛⬜⬛\n⬜⬤⬜\n⬛⬜⬛", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜"], correctIndex: 1 },
+{ id: "Mnv_8_9_02", block: "Mnv", age: "8_9", difficulty: 3, question: "⬛⬜⬜\n⬜⬤⬛\n⬜⬛⬜ | ¿Cuál es igual al patrón?", options: ["⬜⬛⬜\n⬜⬤⬛\n⬛⬜⬜", "⬛⬜⬜\n⬜⬤⬛\n⬜⬛⬜", "⬛⬜⬛\n⬜⬤⬜\n⬛⬜⬛", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜"], correctIndex: 1 },
+{ id: "Mnv_8_9_03", block: "Mnv", age: "8_9", difficulty: 3, question: "⬜⬜⬛\n⬛⬤⬜\n⬜⬛⬜ | ¿Cuál es igual al patrón?", options: ["⬜⬜⬛\n⬛⬤⬜\n⬜⬛⬜", "⬛⬜⬜\n⬜⬤⬛\n⬜⬛⬜", "⬜⬛⬜\n⬛⬤⬛\n⬜⬛⬜", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜"], correctIndex: 0 },
+{ id: "Mnv_8_9_04", block: "Mnv", age: "8_9", difficulty: 3, question: "⬛⬜⬤\n⬜⬛⬜\n⬜⬜⬛ | ¿Cuál es igual al patrón?", options: ["⬛⬜⬤\n⬜⬛⬜\n⬜⬜⬛", "⬤⬜⬛\n⬜⬛⬜\n⬛⬜⬜", "⬛⬜⬛\n⬜⬤⬜\n⬛⬜⬛", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜"], correctIndex: 0 },
+{ id: "Mnv_8_9_05", block: "Mnv", age: "8_9", difficulty: 3, question: "⬜⬤⬜\n⬛⬜⬛\n⬜⬜⬛ | ¿Cuál es igual al patrón?", options: ["⬜⬤⬜\n⬛⬜⬛\n⬜⬜⬛", "⬜⬛⬜\n⬛⬜⬛\n⬤⬜⬜", "⬛⬜⬛\n⬜⬤⬜\n⬛⬜⬛", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜"], correctIndex: 0 },
+{ id: "Mnv_8_9_06", block: "Mnv", age: "8_9", difficulty: 3, question: "⬛⬜⬜\n⬤⬛⬜\n⬜⬜⬛ | ¿Cuál es igual al patrón?", options: ["⬛⬜⬜\n⬤⬛⬜\n⬜⬜⬛", "⬜⬛⬜\n⬛⬜⬤\n⬜⬛⬜", "⬛⬜⬛\n⬜⬤⬜\n⬛⬜⬛", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜"], correctIndex: 0 },
+{ id: "Mnv_8_9_07", block: "Mnv", age: "8_9", difficulty: 3, question: "⬜⬛⬜\n⬜⬤⬛\n⬛⬜⬜ | ¿Cuál es igual al patrón?", options: ["⬜⬛⬜\n⬜⬤⬛\n⬛⬜⬜", "⬛⬜⬜\n⬜⬤⬛\n⬜⬛⬜", "⬛⬜⬛\n⬜⬤⬜\n⬛⬜⬛", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜"], correctIndex: 0 },
+{ id: "Mnv_8_9_08", block: "Mnv", age: "8_9", difficulty: 3, question: "⬤⬜⬛\n⬜⬛⬜\n⬜⬜⬛ | ¿Cuál es igual al patrón?", options: ["⬤⬜⬛\n⬜⬛⬜\n⬜⬜⬛", "⬛⬜⬤\n⬜⬛⬜\n⬛⬜⬜", "⬛⬜⬛\n⬜⬤⬜\n⬛⬜⬛", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜"], correctIndex: 0 },
+{ id: "Mnv_8_9_09", block: "Mnv", age: "8_9", difficulty: 3, question: "⬜⬜⬛\n⬜⬤⬜\n⬛⬜⬛ | ¿Cuál es igual al patrón?", options: ["⬜⬜⬛\n⬜⬤⬜\n⬛⬜⬛", "⬛⬜⬛\n⬜⬤⬜\n⬜⬜⬛", "⬜⬛⬜\n⬛⬤⬛\n⬜⬛⬜", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜"], correctIndex: 0 },
+{ id: "Mnv_8_9_10", block: "Mnv", age: "8_9", difficulty: 3, question: "⬛⬜⬜\n⬜⬤⬜\n⬛⬜⬛ | ¿Cuál es igual al patrón?", options: ["⬜⬛⬜\n⬜⬤⬜\n⬛⬜⬛", "⬛⬜⬜\n⬜⬤⬜\n⬛⬜⬛", "⬛⬜⬛\n⬜⬤⬜\n⬜⬜⬛", "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜"], correctIndex: 1 },
+{ id: "Mnv_10_11_01", block: "Mnv", age: "10_11", difficulty: 4, question: "◉○◉\n○●○\n◉○◉ | ¿Cuál es igual al patrón?", options: ["○◉○\n○●○\n◉○◉", "◉○◉\n○●○\n◉○◉", "◉○◉\n○○○\n◉○◉", "◉○◉\n○●○\n○◉○"], correctIndex: 1 },
+{ id: "Mnv_10_11_02", block: "Mnv", age: "10_11", difficulty: 4, question: "◐◐◐\n○●○\n◐◐◐ | ¿Cuál es igual al patrón?", options: ["◐◐◐\n○●○\n◐◐◐", "◐◐◐\n○○○\n◐◐◐", "◐○◐\n○●○\n◐○◐", "◐◐◐\n○◐○\n◐◐◐"], correctIndex: 0 },
+{ id: "Mnv_10_11_03", block: "Mnv", age: "10_11", difficulty: 4, question: "○◆○\n◆●◆\n○◆○ | ¿Cuál es igual al patrón?", options: ["○◆○\n◆◆◆\n○◆○", "○○○\n◆●◆\n○◆○", "○◆○\n◆●◆\n○◆○", "○◆○\n◆●◆\n◆○◆"], correctIndex: 2 },
+{ id: "Mnv_10_11_04", block: "Mnv", age: "10_11", difficulty: 4, question: "▣○▣\n○●○\n▣○▣ | ¿Cuál es igual al patrón?", options: ["▣○▣\n○○○\n▣○▣", "▣▣▣\n○●○\n▣▣▣", "▣○▣\n○●○\n▣○▣", "▣○▣\n○●○\n○▣○"], correctIndex: 2 },
+{ id: "Mnv_10_11_05", block: "Mnv", age: "10_11", difficulty: 4, question: "◇◇◇\n◇●◇\n◇◇◇ | ¿Cuál es igual al patrón?", options: ["◇◇◇\n◇●◇\n◇◇◇", "◇◇◇\n◇◇◇\n◇◇◇", "◇◇◇\n○●○\n◇◇◇", "◇◇◇\n◇●◇\n◇▢◇"], correctIndex: 0 },
+{ id: "Mnv_10_11_06", block: "Mnv", age: "10_11", difficulty: 4, question: "◐○◐\n○●○\n◐○◐ | ¿Cuál es igual al patrón?", options: ["◐○◐\n○◐○\n◐○◐", "◐○◐\n○●○\n◐○◐", "◐◐◐\n○●○\n◐◐◐", "◐○◐\n○●○\n○◐○"], correctIndex: 1 },
+{ id: "Mnv_10_11_07", block: "Mnv", age: "10_11", difficulty: 4, question: "◆◆◆\n○●○\n○●○ | ¿Cuál es igual al patrón?", options: ["◆◆◆\n○●○\n○●○", "◆◆◆\n○●○\n○○○", "◆◆◆\n○○○\n○●○", "○◆○\n◆●◆\n○◆○"], correctIndex: 0 },
+{ id: "Mnv_10_11_08", block: "Mnv", age: "10_11", difficulty: 4, question: "▢○▢\n▢●▢\n▢○▢ | ¿Cuál es igual al patrón?", options: ["▢○▢\n▢●▢\n▢○▢", "▢○▢\n▢▢▢\n▢○▢", "▢▢▢\n▢●▢\n▢▢▢", "▢○▢\n○●○\n▢○▢"], correctIndex: 0 },
+{ id: "Mnv_10_11_09", block: "Mnv", age: "10_11", difficulty: 4, question: "○◉○\n◉●◉\n○◉○ | ¿Cuál es igual al patrón?", options: ["○◉○\n◉●◉\n○◉○", "○◉○\n◉◉◉\n○◉○", "○○○\n◉●◉\n○◉○", "○◉○\n◉●◉\n◉○◉"], correctIndex: 0 },
+{ id: "Mnv_10_11_10", block: "Mnv", age: "10_11", difficulty: 4, question: "◐○◐\n○◐○\n◐○◐ | ¿Cuál es igual al patrón?", options: ["◐○◐\n○●○\n◐○◐", "◐○◐\n○◐○\n◐○◐", "◐◐◐\n○◐○\n◐◐◐", "◐○◐\n○◐○\n○◐○"], correctIndex: 1 },
+{ id: "Mnv_12_16_01", block: "Mnv", age: "12_16", difficulty: 6, question: "◉○◐\n○●○\n◉○◉ | ¿Cuál es igual al patrón?", options: ["◉○◐\n○●○\n◉○◉", "◉○◉\n○●○\n◉○◉", "◉○◐\n○◐○\n◉○◉", "◉◐◐\n○●○\n◉○◉"], correctIndex: 0 },
+{ id: "Mnv_12_16_02", block: "Mnv", age: "12_16", difficulty: 6, question: "○◆○\n◆●◆\n○◆◇ | ¿Cuál es igual al patrón?", options: ["○◆○\n◆●◆\n○◆○", "○◆○\n◆●◆\n○◆◇", "○◆○\n◆◐◆\n○◆◇", "◇◆○\n◆●◆\n○◆◇"], correctIndex: 1 },
+{ id: "Mnv_12_16_03", block: "Mnv", age: "12_16", difficulty: 6, question: "▣○▣\n○▢○\n▣◇▣ | ¿Cuál es igual al patrón?", options: ["▣○▣\n○▢○\n▣○▣", "▣◇▣\n○▢○\n▣◇▣", "▣○▣\n○▢○\n▣◇▣", "▣○▣\n○▣○\n▣◇▣"], correctIndex: 2 },
+{ id: "Mnv_12_16_04", block: "Mnv", age: "12_16", difficulty: 6, question: "◇◇◇\n◇●◇\n◇◇▢ | ¿Cuál es igual al patrón?", options: ["◇◇◇\n◇●◇\n◇◇◇", "◇◇◇\n◇◐◇\n◇◇▢", "◇◇▢\n◇●◇\n◇◇◇", "◇◇◇\n◇●◇\n◇◇▢"], correctIndex: 3 },
+{ id: "Mnv_12_16_05", block: "Mnv", age: "12_16", difficulty: 6, question: "◐○◐\n○◆○\n◐◇◐ | ¿Cuál es igual al patrón?", options: ["◐○◐\n○◆○\n◐○◐", "◐○◐\n○◇○\n◐◇◐", "◐○◐\n○◆○\n◐◇◐", "◐○◐\n◆◆○\n◐◇◐"], correctIndex: 2 },
+{ id: "Mnv_12_16_06", block: "Mnv", age: "12_16", difficulty: 6, question: "▢○▢\n▢●▢\n▢○◇ | ¿Cuál es igual al patrón?", options: ["▢○▢\n▢◐▢\n▢○◇", "▢○▢\n▢●▢\n▢○▢", "▢○▢\n▢●▢\n▢○◇", "▢○▢\n○●▢\n▢○◇"], correctIndex: 2 },
+{ id: "Mnv_12_16_07", block: "Mnv", age: "12_16", difficulty: 6, question: "○◉○\n◉◐◉\n◇◉○ | ¿Cuál es igual al patrón?", options: ["○◉○\n◉◐◉\n○◉○", "○◉○\n◉●◉\n◇◉○", "○◉○\n◉◐◉\n◇◉○", "◇◉○\n◉◐◉\n○◉○"], correctIndex: 2 },
+{ id: "Mnv_12_16_08", block: "Mnv", age: "12_16", difficulty: 6, question: "◆○◆\n○▣○\n◆◇◆ | ¿Cuál es igual al patrón?", options: ["◆○◆\n○▢○\n◆◇◆", "◆○◇\n○▣○\n◆◇◆", "◆○◆\n○▣○\n◆◇◆", "◆○◆\n○▣○\n◆◆◆"], correctIndex: 2 },
+{ id: "Mnv_12_16_09", block: "Mnv", age: "12_16", difficulty: 6, question: "◐◐◐\n○●○\n◐◐○ | ¿Cuál es igual al patrón?", options: ["◐◐◐\n○◐○\n◐◐○", "◐◐◐\n○●○\n◐◐○", "◐◐◐\n○●○\n◐○◐", "◐○◐\n○●○\n◐◐○"], correctIndex: 1 },
+{ id: "Mnv_12_16_10", block: "Mnv", age: "12_16", difficulty: 6, question: "▣▢▣\n▢●▢\n▣▢◇ | ¿Cuál es igual al patrón?", options: ["▣▢▣\n▢◐▢\n▣▢◇", "▣▢▣\n▢●▢\n▣▣▣", "▣▢▣\n▢●▢\n▣▢◇", "▣▢▣\n◆●▢\n▣▢◇"], correctIndex: 2 },
+{ id: "Mnv_17_94_01", block: "Mnv", age: "17_94", difficulty: 9, question: "◉○○◉\n○●●○\n○●○●\n◉○○▢ | ¿Cuál es igual al patrón?", options: ["◉○○◉\n○●●○\n○●○●\n◉○○▢", "◉○○◉\n○●●○\n○●●●\n◉○○▢", "◉○○◉\n○●○○\n○●○●\n◉○○▢", "◉○○◉\n○●●○\n○●○●\n◉○○○"], correctIndex: 0 },
+{ id: "Mnv_17_94_02", block: "Mnv", age: "17_94", difficulty: 9, question: "◇◆◆◇\n◆▣◆◆\n◆▣▣◆\n◇◆◆▢ | ¿Cuál es igual al patrón?", options: ["◇◆◆◇\n◆▣◆◆\n◆▣▣◆\n◇◆◆◇", "◇◆◆◇\n◆▣◆◆\n◆▣▣◆\n◇◆◆▢", "◇◆◆◇\n◆▣▣◆\n◆▣▣◆\n◇◆◆▢", "◇◆◆◇\n◆▣◆◆\n◆◆▣◆\n◇◆◆▢"], correctIndex: 1 },
+{ id: "Mnv_17_94_03", block: "Mnv", age: "17_94", difficulty: 9, question: "◐○○◐\n○◉◐○\n○◉◉○\n◐○▢◐ | ¿Cuál es igual al patrón?", options: ["◐○○◐\n○◉◉○\n○◉◉○\n◐○▢◐", "◐○○◐\n○◉◐○\n○◉◉○\n◐○▢◐", "◐○○◐\n○◉◐○\n○◉○○\n◐○▢◐", "◐○○◐\n○◉◐○\n○◉◉○\n◐○○◐"], correctIndex: 1 },
+{ id: "Mnv_17_94_04", block: "Mnv", age: "17_94", difficulty: 9, question: "▣▢▢▣\n▢●◐▢\n▢●●▢\n▣▢▢◇ | ¿Cuál es igual al patrón?", options: ["▣▢▢▣\n▢●●▢\n▢●●▢\n▣▢▢◇", "▣▢▢▣\n▢●◐▢\n▢●●▢\n▣▢▢◇", "▣▢▢▣\n▢●◐▢\n▢●●▢\n▣▢▢▣", "▣▢▢▣\n▢●▢▢\n▢●●▢\n▣▢▢◇"], correctIndex: 1 },
+{ id: "Mnv_17_94_05", block: "Mnv", age: "17_94", difficulty: 9, question: "◉◐◐◉\n◐○○◐\n◐○▢◐\n◉◐○◉ | ¿Cuál es igual al patrón?", options: ["◉◐◐◉\n◐○○◐\n◐○○◐\n◉◐○◉", "◉◐◐◉\n◐○○◐\n◐○▢◐\n◉◐○◉", "◉◐◐◉\n◐○◐◐\n◐○▢◐\n◉◐○◉", "◉◐◐◉\n◐○○◐\n◐○▢◐\n◉◐◐◉"], correctIndex: 1 },
+{ id: "Mnv_17_94_06", block: "Mnv", age: "17_94", difficulty: 9, question: "◇▣▣◇\n▣◆◇▣\n▣◆◆▣\n◇▣▣▢ | ¿Cuál es igual al patrón?", options: ["◇▣▣◇\n▣◆▣▣\n▣◆◆▣\n◇▣▣▢", "◇▣▣◇\n▣◆◇▣\n▣◆◆▣\n◇▣▣▢", "◇▣▣◇\n▣◆◇▣\n▣◆◆▣\n◇▣▣◇", "◇▣▣◇\n▣◆◆▣\n▣◆◆▣\n◇▣▣▢"], correctIndex: 1 },
+{ id: "Mnv_17_94_07", block: "Mnv", age: "17_94", difficulty: 9, question: "◐●●◐\n●○◐●\n●○○●\n◐●▢◐ | ¿Cuál es igual al patrón?", options: ["◐●●◐\n●○◐●\n●○○●\n◐●▢◐", "◐●●◐\n●○●●\n●○○●\n◐●▢◐", "◐●●◐\n●○◐●\n●○○●\n◐●●◐", "◐●●◐\n●○◐●\n●●○●\n◐●▢◐"], correctIndex: 0 },
+{ id: "Mnv_17_94_08", block: "Mnv", age: "17_94", difficulty: 9, question: "▢◉◉▢\n◉○▣◉\n◉○○◉\n▢◉◇▢ | ¿Cuál es igual al patrón?", options: ["▢◉◉▢\n◉○▣◉\n◉○○◉\n▢◉◇▢", "▢◉◉▢\n◉○○◉\n◉○○◉\n▢◉◇▢", "▢◉◉▢\n◉○▣◉\n◉◉○◉\n▢◉◇▢", "▢◉◉▢\n◉○▣◉\n◉○○◉\n▢◉○▢"], correctIndex: 0 },
+{ id: "Mnv_17_94_09", block: "Mnv", age: "17_94", difficulty: 9, question: "◆◐◐◆\n◐◇▢◐\n◐◇◇◐\n◆◐○◆ | ¿Cuál es igual al patrón?", options: ["◆◐◐◆\n◐◇▢◐\n◐◇◇◐\n◆◐○◆", "◆◐◐◆\n◐◇◇◐\n◐◇◇◐\n◆◐○◆", "◆◐◐◆\n◐◇▢◐\n◐◐◇◐\n◆◐○◆", "◆◐◐◆\n◐◇▢◐\n◐◇◇◐\n◆◐◐◆"], correctIndex: 0 },
+{ id: "Mnv_17_94_10", block: "Mnv", age: "17_94", difficulty: 9, question: "▣◆◆▣\n◆○▢◆\n◆○○◆\n▣◆◇▣ | ¿Cuál es igual al patrón?", options: ["▣◆◆▣\n◆○◆◆\n◆○○◆\n▣◆◇▣", "▣◆◆▣\n◆○▢◆\n◆○○◆\n▣◆◇▣", "▣◆◆▣\n◆○▢◆\n◆◆○◆\n▣◆◇▣", "▣◆◆▣\n◆○▢◆\n◆○○◆\n▣◆◆▣"], correctIndex: 1 },
+
+];
+
+  // --- Estado de la app ---
+  let selectedAgeRangeId = null;
+  let selectedBlockId = null;
+  let currentQuestions = [];
+  let currentIndex = 0;
+  let score = 0;
+  let nextAgeIndexForExtension = null;
+
+
+  // Estado de pregunta
+  let answered = false;
+  let currentAttempts = 0;      // para Ca y Fi (0 = primer intento, 1 = segundo)
+  let consecutiveFails = 0;     // fallos consecutivos con 0 puntos
+  let endedByFails = false;
+
+  // Fase especial para bloques de memoria (Mv y Mnv)
+  let isMemoryPhase = false;      // true = estamos mostrando la lista / patrón a memorizar
+  let currentMemoryParts = null;  // { listText, questionText } o null
+
+  // Timer
+  let timerInterval = null;
+  let timeLeft = 20;
+
+  // --- Referencias DOM ---
+  const ageRangeContainer = document.getElementById("age-range-container");
+  const blockContainer = document.getElementById("block-container");
+  const startBtn = document.getElementById("start-btn");
+
+  const selectionScreen = document.getElementById("selection-screen");
+  const quizScreen = document.getElementById("quiz-screen");
+
+  const metaAge = document.getElementById("meta-age");
+  const metaBlock = document.getElementById("meta-block");
+  const questionText = document.getElementById("question-text");
+  const answersContainer = document.getElementById("answers-container");
+  const feedbackDiv = document.getElementById("feedback");
+  const progressText = document.getElementById("progress-text");
+  const scoreText = document.getElementById("score-text");
+  const nextBtn = document.getElementById("next-btn");
+  const changeSelectionBtn = document.getElementById("change-selection-btn");
+  const timerDiv = document.getElementById("timer");
+
+  // --- Estilos extra (Mnv: patrón grande + respuestas en 2x2) ---
+(function injectExtraStyles() {
+  const css = `
+    /* Mnv: patrón exacto, sin wrapping */
+    .pattern {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 30px;
+      line-height: 1.25;
+      letter-spacing: 0.12em;
+      white-space: pre;
+      text-align: center;
+    }
+
+    /* Mv: lista que SI puede partir en varias líneas */
+    .memory-pattern {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 24px;
+      line-height: 1.3;
+      letter-spacing: 0.06em;
+      white-space: pre-wrap;          /* ✅ permite saltos y wrapping */
+      overflow-wrap: anywhere;        /* ✅ rompe palabras largas si hace falta */
+      word-break: break-word;
+      max-width: 100%;
+      text-align: center;
+      margin: 0;
+    }
+
+    .memory-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 18px;
+      width: 100%;                   /* ✅ para que el <pre> tenga límite */
+    }
+
+    .memory-label {
+      margin-bottom: 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .memory-pattern {
+      display: block;                /* ✅ ocupa el ancho disponible */
+      padding: 4px 6px;
+    }
+
+    /* Respuestas Mnv en 2x2 */
+    #answers-container.grid-2x2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      justify-items: center;
+    }
+
+    #answers-container.grid-2x2 .answer-btn {
+      justify-self: center;
+    }
+
+    #answers-container.grid-2x2 .answer-btn pre {
+      margin: 0;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .memory-pattern { font-size: 20px; }
+      .pattern { font-size: 26px; }
+    }
+
+    @media (max-width: 520px) {
+      #answers-container.grid-2x2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  `;
+  const style = document.createElement("style");
+  style.textContent = css;
+  document.head.appendChild(style);
+})();
+
+
+
+
+
+
+  const resultContainer = document.getElementById("result-container");
+  const resultMain = document.getElementById("result-main");
+  const resultDetail = document.getElementById("result-detail");
+  const resultTag = document.getElementById("result-tag");
+  const retryBtn = document.getElementById("retry-btn");
+  const backHomeBtn = document.getElementById("back-home-btn");
+
+  // --- Utilidades ---
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function getAgeIndex(id) {
+    return ageRanges.findIndex(a => a.id === id);
+  }
+
+  // Mv y Mnv usan formato "lista/ patrón | pregunta"
+  function getMemoryParts(q) {
+    if (
+      (selectedBlockId === "Mv" || selectedBlockId === "Mnv") &&
+      typeof q.question === "string" &&
+      q.question.includes("|")
+    ) {
+      const parts = q.question.split("|");
+      return {
+        listText: parts[0].trim(),               // lo que se memoriza
+        questionText: (parts[1] || "").trim()    // enunciado posterior
+      };
+    }
+    return null;
+  }
+
+  // Convierte \n en <br> para mostrar listas y patrones (Mv/Mnv)
+  function formatMultiline(text) {
+    if (typeof text !== "string") return "";
+    return text.replace(/\n/g, "<br>");
+  }
+
+  // Construye un set de preguntas: hasta 5 por edad, aleatorias, desde la edad inicial hacia arriba
+  function buildQuestionSet() {
+    // Construye la secuencia:
+    // 1) Una pregunta de calentamiento de cada nivel anterior (3_5, 6_7, ...)
+    // 2) Cinco preguntas del nivel seleccionado
+    // Además inicializa el índice para poder continuar con niveles superiores
+    const finalIdx = ageOrder.indexOf(selectedAgeRangeId);
+    if (finalIdx === -1) {
+      return [];
+    }
+
+    let newQuestions = [];
+
+    // Calentamiento: 1 pregunta aleatoria de cada edad anterior
+    for (let i = 0; i < finalIdx; i++) {
+      const ageId = ageOrder[i];
+      const pool = questions.filter(
+        q => q.block === selectedBlockId && q.age === ageId
+      );
+      if (pool.length > 0) {
+        const randomIndex = Math.floor(Math.random() * pool.length);
+        newQuestions.push(pool[randomIndex]);
+      }
+    }
+
+    // Nivel seleccionado: hasta 5 preguntas aleatorias
+    const targetAgeId = ageOrder[finalIdx];
+    const targetPool = questions.filter(
+      q => q.block === selectedBlockId && q.age === targetAgeId
+    );
+    if (targetPool.length > 0) {
+      const shuffled = shuffle(targetPool.slice());
+      const selected = shuffled.slice(0, 5);
+      newQuestions = newQuestions.concat(selected);
+    }
+
+    // Preparamos el siguiente nivel al que se podrá avanzar cuando se acaben estas
+    nextAgeIndexForExtension = finalIdx + 1;
+
+    return newQuestions;
+  }
+
+  // --- Render selección de edad y bloque ---
+  // --- Render selección de edad y bloque ---
+  function renderAgeRanges() {
+    ageRangeContainer.innerHTML = "";
+    ageRanges.forEach(range => {
+      const pill = document.createElement("button");
+      pill.className = "pill";
+      pill.innerHTML = `
+        <input type="radio" name="age-range" value="${range.id}">
+        <span>${range.label}</span>
+      `;
+      pill.addEventListener("click", () => {
+        selectedAgeRangeId = range.id;
+        updateSelectionStyles();
+        updateStartButtonState();
+      });
+      ageRangeContainer.appendChild(pill);
+    });
+  }
+
+  function renderBlocks() {
+    blockContainer.innerHTML = "";
+    blocks.forEach(block => {
+      const pill = document.createElement("button");
+      pill.className = "pill";
+      pill.innerHTML = `
+        <input type="radio" name="block" value="${block.id}">
+        <span class="badge">${block.icon}</span>
+        <span>${block.label}</span>
+      `;
+      pill.addEventListener("click", () => {
+        selectedBlockId = block.id;
+        updateSelectionStyles();
+        updateStartButtonState();
+      });
+      blockContainer.appendChild(pill);
+    });
+  }
+
+  function updateSelectionStyles() {
+    Array.from(ageRangeContainer.children).forEach(btn => {
+      const value = btn.querySelector("input").value;
+      btn.classList.toggle("selected", value === selectedAgeRangeId);
+    });
+    Array.from(blockContainer.children).forEach(btn => {
+      const value = btn.querySelector("input").value;
+      btn.classList.toggle("selected", value === selectedBlockId);
+    });
+  }
+
+  function updateStartButtonState() {
+    startBtn.disabled = !(selectedAgeRangeId && selectedBlockId);
+  }
+
+  // --- Lógica del quiz ---
+
+  function startQuiz() {
+    const startIdx = getAgeIndex(selectedAgeRangeId);
+    if (startIdx === -1) {
+      alert("Rango de edad no válido.");
+      return;
+    }
+
+    // Nuevo set aleatorio cada inicio
+    currentQuestions = buildQuestionSet();
+
+    if (currentQuestions.length === 0) {
+      alert("Todavía no hay preguntas para ese bloque y rango de edad. Añade más ítems en el código.");
+      return;
+    }
+
+    score = 0;
+    currentIndex = 0;
+    answered = false;
+    currentAttempts = 0;
+    consecutiveFails = 0;
+    endedByFails = false;
+    isMemoryPhase = false;
+    currentMemoryParts = null;
+
+    selectionScreen.classList.add("hidden");
+    quizScreen.classList.remove("hidden");
+    resultContainer.classList.add("hidden");
+
+    const ageObj = ageRanges.find(a => a.id === selectedAgeRangeId);
+    const blockObj = blocks.find(b => b.id === selectedBlockId);
+    metaAge.textContent = "Edad inicial: " + (ageObj ? ageObj.label : selectedAgeRangeId);
+    metaBlock.textContent = blockObj ? `${blockObj.icon} ${blockObj.label}` : selectedBlockId;
+
+    showQuestion();
+  }
+
+  function resetTimer() {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    const isMemoryBlock = (selectedBlockId === "Mv" || selectedBlockId === "Mnv");
+
+    if (isMemoryBlock && isMemoryPhase && currentMemoryParts) {
+      timeLeft = 10; // 10s para memorizar
+      timerDiv.textContent = `Memoriza: ${timeLeft}s`;
+    } else {
+      timeLeft = 20; // 20s para responder
+      updateTimerDisplay();
+    }
+
+    timerInterval = setInterval(() => {
+      timeLeft--;
+
+      if (isMemoryBlock && isMemoryPhase && currentMemoryParts) {
+        timerDiv.textContent = `Memoriza: ${timeLeft}s`;
+      } else {
+        updateTimerDisplay();
+      }
+
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+
+        const qNow = currentQuestions[currentIndex];
+
+        // Si estábamos en fase de memoria de Mv/Mnv → pasamos a fase de pregunta
+        if (isMemoryBlock && isMemoryPhase && currentMemoryParts) {
+          isMemoryPhase = false;
+          renderAnswerPhase(qNow);
+        } else {
+          handleTimeUp();
+        }
+      }
+    }, 1000);
+  }
+
+  function updateTimerDisplay() {
+    timerDiv.textContent = `Tiempo: ${timeLeft}s`;
+    timerDiv.classList.toggle("low", timeLeft <= 5);
+  }
+
+  
+  // --- Layout especial para Mnv (patrón grande + respuestas 2x2) ---
+  function applyMnvLayout(isMnv) {
+    if (!answersContainer || !questionText) return;
+    if (isMnv) {
+      answersContainer.classList.add("grid-2x2");
+      questionText.classList.add("pattern");
+    } else {
+      answersContainer.classList.remove("grid-2x2");
+      questionText.classList.remove("pattern");
+    }
+  }
+
+function renderAnswerPhase(q) {
+  const isMemoryBlock = (selectedBlockId === "Mv" || selectedBlockId === "Mnv");
+
+  // Si es Mv o Mnv con partes, usamos la segunda parte como enunciado
+  const rawText =
+    isMemoryBlock && currentMemoryParts
+      ? currentMemoryParts.questionText
+      : q.question;
+
+  applyMnvLayout(selectedBlockId === "Mnv");
+
+  // Pregunta
+  if (selectedBlockId === "Mnv") {
+    // En Mnv usamos textContent para evitar diferencias con espacios/saltos
+    questionText.textContent = rawText;
+  } else {
+    questionText.innerHTML = formatMultiline(rawText);
+  }
+
+  answersContainer.innerHTML = "";
+  answersContainer.classList.remove("hidden");
+  feedbackDiv.textContent = "";
+  feedbackDiv.className = "feedback";
+  nextBtn.textContent = "Siguiente";
+  nextBtn.disabled = true;
+  answered = false;
+  currentAttempts = 0;
+
+  q.options.forEach((optionText, index) => {
+    const btn = document.createElement("button");
+    btn.className = "answer-btn";
+
+    if (selectedBlockId === "Mnv") {
+      // ✅ Render idéntico a memoria: <pre> + textContent (preserva espacios exactos)
+      btn.innerHTML = "";
+      const pre = document.createElement("pre");
+      pre.className = "pattern";
+      pre.textContent = optionText;
+      btn.appendChild(pre);
+    } else {
+      btn.innerHTML = formatMultiline(optionText);
+    }
+
+    btn.addEventListener("click", () => handleAnswerClick(index));
+    answersContainer.appendChild(btn);
+  });
+
+  progressText.textContent = "";
+  scoreText.textContent = `Puntos: ${score}`;
+
+  resetTimer(); // 20s para responder
+}
+
+
+  function showQuestion() {
+  const q = currentQuestions[currentIndex];
+
+  currentMemoryParts = getMemoryParts(q);
+  const isMemoryBlock = (selectedBlockId === "Mv" || selectedBlockId === "Mnv");
+  const isMnv = (selectedBlockId === "Mnv");
+
+  // Si es Mv o Mnv con formato lista/patrón | pregunta → fase de memoria
+  if (isMemoryBlock && currentMemoryParts) {
+    isMemoryPhase = true;
+    answered = false;
+    currentAttempts = 0;
+
+    const label =
+      selectedBlockId === "Mv"
+        ? "Memoriza esta lista:"
+        : "Memoriza este patrón:";
+
+    applyMnvLayout(isMnv);
+
+    // ✅ Construir DOM (evita indentaciones/espacios raros de innerHTML)
+    questionText.innerHTML = "";
+
+    const wrap = document.createElement("div");
+    wrap.className = "memory-container";
+
+    const lab = document.createElement("div");
+    lab.className = "memory-label";
+    lab.textContent = label;
+
+    const pre = document.createElement("pre");
+    // En Mnv aplicamos .pattern (grande/monoespaciado). En Mv no hace falta.
+    pre.className = "memory-pattern" + (isMnv ? " pattern" : "");
+    pre.textContent = currentMemoryParts.listText; // <-- EXACTO, conserva espacios/saltos
+
+    wrap.appendChild(lab);
+    wrap.appendChild(pre);
+    questionText.appendChild(wrap);
+
+    answersContainer.innerHTML = "";
+    answersContainer.classList.add("hidden");
+    feedbackDiv.textContent = "Tienes 10 segundos para memorizar.";
+    feedbackDiv.className = "feedback";
+
+    progressText.textContent = "";
+    scoreText.textContent = `Puntos: ${score}`;
+	
+	// ✅ Durante la fase de memoria: permitir saltar sin esperar
+	nextBtn.textContent = "Lo tengo!";
+	nextBtn.disabled = false;
+
+    resetTimer(); // 10s de memoria
+	
+  } else {
+    // ✅ Limpieza de layout/clases para que no herede estilos de Mnv
+    isMemoryPhase = false;
+    applyMnvLayout(false);
+    renderAnswerPhase(q);
+  }
+}
+
+
+  function handleAnswerClick(selectedIndex) {
+    if (answered || isMemoryPhase) return;
+
+    const q = currentQuestions[currentIndex];
+    const isSpecialBlock = (selectedBlockId === "Ca" || selectedBlockId === "Fi");
+    const buttons = Array.from(answersContainer.children);
+
+    // --- Bloques especiales Ca y Fi: dos intentos, 2 puntos primer intento, 1 segundo ---
+    if (isSpecialBlock) {
+      // ACIERTO
+      if (selectedIndex === q.correctIndex) {
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+        answered = true;
+
+        buttons.forEach((btn, idx) => {
+          btn.classList.add("disabled");
+          if (idx === q.correctIndex) {
+            btn.classList.add("correct");
+          }
+        });
+
+        if (currentAttempts === 0) {
+          score += 2;
+          feedbackDiv.textContent = "✔ Respuesta correcta (primer intento: 2 puntos)";
+        } else {
+          score += 1;
+          feedbackDiv.textContent = "✔ Respuesta correcta (segundo intento: 1 punto)";
+        }
+        feedbackDiv.classList.add("correct");
+        consecutiveFails = 0;
+
+        scoreText.textContent = `Puntos: ${score}`;
+
+        nextBtn.textContent = endedByFails ? "Ver resultado" : "Siguiente";
+        nextBtn.disabled = false;
+        return;
+      }
+
+      // FALLO
+      if (currentAttempts === 0) {
+        currentAttempts = 1;
+        const btn = buttons[selectedIndex];
+        btn.classList.add("incorrect", "disabled");
+        feedbackDiv.textContent = "✘ Incorrecto. Tienes un segundo intento.";
+        feedbackDiv.classList.add("incorrect");
+      } else {
+        // Segundo fallo → 0 puntos y pregunta terminada
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+        answered = true;
+
+        buttons.forEach((btn, idx) => {
+          btn.classList.add("disabled");
+          if (idx === q.correctIndex) {
+            btn.classList.add("correct");
+          }
+        });
+
+        feedbackDiv.textContent = "✘ Respuesta incorrecta. Sin más intentos.";
+        feedbackDiv.classList.add("incorrect");
+
+        consecutiveFails += 1;
+        if (consecutiveFails >= 3) {
+          endedByFails = true;
+        }
+
+        scoreText.textContent = `Puntos: ${score}`;
+
+        nextBtn.textContent = endedByFails ? "Ver resultado" : "Siguiente";
+        nextBtn.disabled = false;
+      }
+
+      return;
+    }
+
+    // --- Resto de bloques (Ad, An, Mv, Mnv): un solo intento, 1 punto por acierto ---
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    answered = true;
+
+    buttons.forEach((btn, idx) => {
+      btn.classList.add("disabled");
+      if (idx === q.correctIndex) {
+        btn.classList.add("correct");
+      } else if (idx === selectedIndex) {
+        btn.classList.add("incorrect");
+      }
+    });
+
+    if (selectedIndex === q.correctIndex) {
+      score += 1;
+      consecutiveFails = 0;
+      feedbackDiv.textContent = "✔ Respuesta correcta";
+      feedbackDiv.classList.add("correct");
+    } else {
+      consecutiveFails += 1;
+      if (consecutiveFails >= 3) {
+        endedByFails = true;
+      }
+      feedbackDiv.textContent = "✘ Respuesta incorrecta";
+      feedbackDiv.classList.add("incorrect");
+    }
+
+    scoreText.textContent = `Puntos: ${score}`;
+
+    nextBtn.textContent = endedByFails ? "Ver resultado" : "Siguiente";
+    nextBtn.disabled = false;
+  }
+
+  function handleTimeUp() {
+    if (answered || isMemoryPhase) return;
+    answered = true;
+
+    const q = currentQuestions[currentIndex];
+    const buttons = Array.from(answersContainer.children);
+
+    buttons.forEach((btn, idx) => {
+      btn.classList.add("disabled");
+      if (idx === q.correctIndex) {
+        btn.classList.add("correct");
+      }
+    });
+
+    feedbackDiv.textContent = "⏰ Tiempo agotado. Se cuenta como incorrecto.";
+    feedbackDiv.classList.add("incorrect");
+
+    consecutiveFails += 1;
+    if (consecutiveFails >= 3) {
+      endedByFails = true;
+    }
+
+    scoreText.textContent = `Puntos: ${score}`;
+
+    nextBtn.textContent = endedByFails ? "Ver resultado" : "Siguiente";
+    nextBtn.disabled = false;
+  }
+
+  function goNext() {
+  
+	  // ✅ Si estamos en fase de memoria (Mv/Mnv), "Lo tengo!" salta a las respuestas
+	  const isMemoryBlock = (selectedBlockId === "Mv" || selectedBlockId === "Mnv");
+	  if (isMemoryBlock && isMemoryPhase && currentMemoryParts) {
+		if (timerInterval) {
+		  clearInterval(timerInterval);
+		  timerInterval = null;
+		}
+		isMemoryPhase = false;
+
+		// Volvemos el botón a estado normal para la fase de respuestas
+		nextBtn.textContent = "Siguiente";
+		nextBtn.disabled = true;
+
+		const qNow = currentQuestions[currentIndex];
+		renderAnswerPhase(qNow);
+		return;
+		}
+    if (!answered) return;
+
+    // Si el test ha terminado por 3 fallos consecutivos, cerramos
+    if (endedByFails) {
+      showResult();
+      return;
+    }
+
+    // Si estamos al final del bloque actual, intentamos ampliar al siguiente nivel de edad
+    if (currentIndex === currentQuestions.length - 1) {
+      let extended = false;
+
+      // Mientras queden edades superiores por explorar
+      while (typeof nextAgeIndexForExtension === "number" &&
+             nextAgeIndexForExtension < ageOrder.length &&
+             !extended) {
+
+        const nextAgeId = ageOrder[nextAgeIndexForExtension];
+        const pool = questions.filter(
+          q => q.block === selectedBlockId && q.age === nextAgeId
+        );
+
+        if (pool.length > 0) {
+          const shuffled = shuffle(pool.slice());
+          const extra = shuffled.slice(0, 5); // hasta 5 preguntas del siguiente nivel
+          currentQuestions = currentQuestions.concat(extra);
+          nextAgeIndexForExtension++;
+          extended = true;
+        } else {
+          // Si no hay preguntas para esa edad, saltamos a la siguiente
+          nextAgeIndexForExtension++;
+        }
+      }
+
+      if (!extended) {
+        // No hay más edades con preguntas → fin del test
+        showResult();
+        return;
+      }
+
+      // Hemos ampliado el conjunto de preguntas: pasamos a la siguiente
+      currentIndex++;
+      showQuestion();
+    } else {
+      // Aún quedan preguntas dentro del conjunto actual
+      currentIndex++;
+      showQuestion();
+    }
+  }
+  
+  function showResult() {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    const preguntasRespondidas = currentIndex + 1;
+    const maxPointsPorPregunta =		
+      (selectedBlockId === "Ca" || selectedBlockId === "Fi") ? 2 : 1;
+    const maxPoints = preguntasRespondidas * maxPointsPorPregunta;
+    const percentage = maxPoints > 0 ? Math.round((score / maxPoints) * 100) : 0;
+
+    const blockObj = blocks.find(b => b.id === selectedBlockId);
+
+    resultMain.textContent = `Resultado: ${score} puntos en ${preguntasRespondidas} preguntas`;
+    resultDetail.textContent =
+      `Puntuación máxima posible (según preguntas mostradas): ${maxPoints} puntos · ` +
+      `Porcentaje obtenido: ${percentage}%. ` +
+      (blockObj ? `Bloque trabajado: ${blockObj.icon} ${blockObj.label}. ` : "") +
+      (endedByFails ? "El bloque se detuvo tras 3 fallos consecutivos." : "");
+
+    resultTag.className = "result-tag";
+    if (percentage >= 80) {
+      resultTag.classList.add("good");
+      resultTag.textContent = "Muy buen rendimiento en este bloque";
+    } else if (percentage >= 50) {
+      resultTag.classList.add("mid");
+      resultTag.textContent = "Rendimiento moderado · se puede mejorar";
+    } else {
+      resultTag.classList.add("low");
+      resultTag.textContent = "Rendimiento bajo · conviene practicar más";
+    }
+
+    resultContainer.classList.remove("hidden");
+  }
+
+  function backToSelection() {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    quizScreen.classList.add("hidden");
+    selectionScreen.classList.remove("hidden");
+  }
+
+  function retryBlock() {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    currentQuestions = buildQuestionSet();
+    score = 0;
+    currentIndex = 0;
+    answered = false;
+    currentAttempts = 0;
+    consecutiveFails = 0;
+    endedByFails = false;
+    isMemoryPhase = false;
+    currentMemoryParts = null;
+
+    resultContainer.classList.add("hidden");
+    showQuestion();
+  }
+
+  // --- Eventos ---
+  startBtn.addEventListener("click", startQuiz);
+  nextBtn.addEventListener("click", goNext);
+  changeSelectionBtn.addEventListener("click", backToSelection);
+  retryBtn.addEventListener("click", retryBlock);
+  backHomeBtn.addEventListener("click", backToSelection);
+
+  // Inicializar UI
+  renderAgeRanges();
+  renderBlocks();
+  updateStartButtonState();
+
+
+
+
+</script>
+</body>
+</html>
