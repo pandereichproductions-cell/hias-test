@@ -1140,12 +1140,21 @@
       #question-text { font-size: 18px; }
     }
 
+	/* Centrar el bloque de respuestas dentro del panel */
+	#answers-container {
+	  width: 100%;
+	  display: flex;
+	  justify-content: center;
+	}
+
     /* Respuestas Mnv en 2x2 */
     #answers-container.grid-2x2 {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-      justify-items: center;
+	  grid-template-columns: repeat(2, minmax(0, 1fr));
+	  gap: 18px;
+	  justify-items: center;
+	  justify-content: center;  /* ✅ centra las columnas dentro del grid */
+	  margin: 0 auto;           /* ✅ centra el grid como bloque */
     }
 
     #answers-container.grid-2x2 .answer-btn {
@@ -1159,27 +1168,49 @@
 
    @media (max-width: 520px) {
 
-	  #answers-container.grid-2x2 {
-		grid-template-columns: repeat(2, 1fr);
+	  #answers-container.grid-2x2{
+		grid-template-columns: repeat(2, auto); /* ✅ columnas del tamaño del botón */
 		gap: 10px;
-		width: 94vw;
+		width: 100%;                            /* ✅ respecto al cuadro, no al viewport */
 		max-width: 420px;
 		margin: 0 auto;
+		padding: 0 12px;                        /* ✅ respeta el padding interno de la card */
+		box-sizing: border-box;
+		justify-content: center;                /* ✅ centra las 2 columnas */
 	  }
 
-	 #answers-container.grid-2x2 .answer-btn {
-		  width: fit-content;                 /* ✅ se ajusta al patrón */
-		  max-width: calc(50vw - 18px);       /* ✅ nunca se sale en 2 columnas */
+	  #answers-container.grid-2x2 .answer-btn{
+		width: 100%;              /* ✅ que la tarjeta tenga ancho suficiente */
+		  max-width: 100%;
 		  min-width: 0;
 		  box-sizing: border-box;
-		  padding: 6px 8px;                   /* ✅ un poco más “tarjeta” */
-		}
+		  padding: 6px 6px;         /* compacto */
+		  display: flex;
+		  justify-content: center;  /* ✅ centra el patrón dentro */
+		  align-items: center;
+	  }
 
-	  #answers-container.grid-2x2 .answer-btn pre {
-		max-width: 100%;
-		overflow: hidden;
-		letter-spacing: 0.12em; /* igual que el patrón */
-		width: fit-content;
+	  #answers-container.grid-2x2 .answer-btn pre{
+		  margin: 0;
+		  max-width: 100%;
+		  overflow: visible;   /* ✅ no recortes */
+	  }
+
+	}
+	@media (max-width: 380px){
+	  #answers-container.grid-2x2{
+		gap: 8px;
+		padding: 0 8px;
+	  }
+
+	  #answers-container.grid-2x2 .answer-btn{
+		padding: 4px 6px;          /* ✅ más compacto */
+	  }
+
+	  /* Escala el patrón para que quepa sin cortar */
+	  #answers-container.grid-2x2 .answer-btn pre{
+		transform: scale(0.9);
+		transform-origin: center;
 	  }
 	}
 
