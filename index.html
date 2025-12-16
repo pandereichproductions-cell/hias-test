@@ -381,7 +381,7 @@
 <div class="app">
   <h1>Entrenamiento HIAS</h1>
   <div class="subtitle">
-    20 segundos por pregunta. Al terminar una edad, el bloque continúa con las siguientes.
+    Elige tu edad y el juego
   </div>
 
   <!-- Selección inicial -->
@@ -1158,21 +1158,29 @@
     }
 
    @media (max-width: 520px) {
-	  #answers-container.grid-2x2 {
-		grid-template-columns: repeat(2, 1fr);  /* ✅ 2 columnas */
-		gap: 12px;                               /* ✅ más compacto */
+
+	  /* Mantén 2 columnas, pero con un contenedor más estrecho */
+	  #answers-container.grid-2x2{
+		grid-template-columns: repeat(2, 1fr);
+		gap: 10px;
+		width: 92vw;          /* ✅ encaja en móvil */
+		max-width: 420px;     /* ✅ evita que se “estire” demasiado */
+		margin: 0 auto;       /* ✅ centrado */
 	  }
 
-	  #answers-container.grid-2x2 .answer-btn {
-		padding: 8px 6px;                        /* ✅ menos padding */
-		min-width: 0;                            /* 🔑 CLAVE para que encaje */
+	  /* Botón más compacto para que quepa 2x2 */
+	  #answers-container.grid-2x2 .answer-btn{
+		width: 100%;
+		padding: 6px 4px;     /* ✅ menos padding */
+		min-width: 0;         /* 🔑 permite encoger en grid */
 	  }
 
-	  #answers-container.grid-2x2 .answer-btn pre {
-		font-size: 20px;                         /* ✅ patrón un poco más pequeño */
-		letter-spacing: 0.10em;                  /* ✅ reduce ancho visual */
+	  /* Mismo tamaño que el patrón (NO reducir font-size) */
+	  #answers-container.grid-2x2 .answer-btn pre{
+		letter-spacing: 0.12em; /* ✅ igual que .pattern */
 	  }
-	}
+}
+
   `;
   const style = document.createElement("style");
   style.textContent = css;
