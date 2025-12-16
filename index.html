@@ -1159,27 +1159,30 @@
 
    @media (max-width: 520px) {
 
-	  /* Mantén 2 columnas, pero con un contenedor más estrecho */
-	  #answers-container.grid-2x2{
+	  #answers-container.grid-2x2 {
 		grid-template-columns: repeat(2, 1fr);
 		gap: 10px;
-		width: 92vw;          /* ✅ encaja en móvil */
-		max-width: 420px;     /* ✅ evita que se “estire” demasiado */
-		margin: 0 auto;       /* ✅ centrado */
+		width: 94vw;
+		max-width: 420px;
+		margin: 0 auto;
 	  }
 
-	  /* Botón más compacto para que quepa 2x2 */
-	  #answers-container.grid-2x2 .answer-btn{
-		width: 100%;
-		padding: 6px 4px;     /* ✅ menos padding */
-		min-width: 0;         /* 🔑 permite encoger en grid */
-	  }
+	 #answers-container.grid-2x2 .answer-btn {
+		  width: fit-content;                 /* ✅ se ajusta al patrón */
+		  max-width: calc(50vw - 18px);       /* ✅ nunca se sale en 2 columnas */
+		  min-width: 0;
+		  box-sizing: border-box;
+		  padding: 6px 8px;                   /* ✅ un poco más “tarjeta” */
+		}
 
-	  /* Mismo tamaño que el patrón (NO reducir font-size) */
-	  #answers-container.grid-2x2 .answer-btn pre{
-		letter-spacing: 0.12em; /* ✅ igual que .pattern */
+	  #answers-container.grid-2x2 .answer-btn pre {
+		max-width: 100%;
+		overflow: hidden;
+		letter-spacing: 0.12em; /* igual que el patrón */
+		width: fit-content;
 	  }
-}
+	}
+
 
   `;
   const style = document.createElement("style");
