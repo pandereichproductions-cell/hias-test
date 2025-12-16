@@ -1157,11 +1157,22 @@
       .pattern { font-size: 26px; }
     }
 
-    @media (max-width: 520px) {
-      #answers-container.grid-2x2 {
-        grid-template-columns: 1fr;
-      }
-    }
+   @media (max-width: 520px) {
+	  #answers-container.grid-2x2 {
+		grid-template-columns: repeat(2, 1fr);  /* ✅ 2 columnas */
+		gap: 12px;                               /* ✅ más compacto */
+	  }
+
+	  #answers-container.grid-2x2 .answer-btn {
+		padding: 8px 6px;                        /* ✅ menos padding */
+		min-width: 0;                            /* 🔑 CLAVE para que encaje */
+	  }
+
+	  #answers-container.grid-2x2 .answer-btn pre {
+		font-size: 20px;                         /* ✅ patrón un poco más pequeño */
+		letter-spacing: 0.10em;                  /* ✅ reduce ancho visual */
+	  }
+	}
   `;
   const style = document.createElement("style");
   style.textContent = css;
