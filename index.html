@@ -381,9 +381,6 @@
 <div class="app">
   <h1>Entrenamiento HIAS</h1>
   <div class="subtitle">
-    Adivinanzas (Ad). Analogías verbales (An).<br>
-    Categorías (Ca). Figuras incompletas (Fi).<br>
-    Memoria verbal (Mv). Memoria no verbal (Mnv).<br><br>
     20 segundos por pregunta. Al terminar una edad, el bloque continúa con las siguientes.
   </div>
 
@@ -403,8 +400,6 @@
         <div class="section-title">2. Selecciona el bloque</div>
       </div>
       <div class="chip">
-        Bloques HIAS simplificados
-        <small>(Ad, An, Ca, Fi, Mv, Mnv)</small>
       </div>
     </div>
     <div class="selection-grid" id="block-container"></div>
@@ -1099,12 +1094,22 @@
       font-size: 24px;
       line-height: 1.3;
       letter-spacing: 0.06em;
-      white-space: pre-wrap;          /* ✅ permite saltos y wrapping */
-      overflow-wrap: anywhere;        /* ✅ rompe palabras largas si hace falta */
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
       word-break: break-word;
       max-width: 100%;
       text-align: center;
       margin: 0;
+      display: block;
+      padding: 4px 6px;
+    }
+
+    /* Asegura color y formato en respuestas */
+    .answer-btn pre {
+      color: #111;
+      white-space: pre;
+      margin: 0;
+      text-align: center;
     }
 
     .memory-container {
@@ -1112,7 +1117,7 @@
       flex-direction: column;
       align-items: center;
       margin-top: 18px;
-      width: 100%;                   /* ✅ para que el <pre> tenga límite */
+      width: 100%;
     }
 
     .memory-label {
@@ -1121,9 +1126,18 @@
       text-align: center;
     }
 
-    .memory-pattern {
-      display: block;                /* ✅ ocupa el ancho disponible */
-      padding: 4px 6px;
+    /* Texto de la pregunta */
+    #question-text {
+      font-size: 22px;
+      line-height: 1.25;
+      text-align: center;
+      max-width: 100%;
+      padding: 0 12px;
+      word-wrap: break-word;
+    }
+
+    @media (max-width: 480px) {
+      #question-text { font-size: 18px; }
     }
 
     /* Respuestas Mnv en 2x2 */
@@ -1136,11 +1150,6 @@
 
     #answers-container.grid-2x2 .answer-btn {
       justify-self: center;
-    }
-
-    #answers-container.grid-2x2 .answer-btn pre {
-      margin: 0;
-      text-align: center;
     }
 
     @media (max-width: 640px) {
@@ -1158,6 +1167,7 @@
   style.textContent = css;
   document.head.appendChild(style);
 })();
+
 
 
 
