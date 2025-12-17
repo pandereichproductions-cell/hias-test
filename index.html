@@ -894,11 +894,11 @@
 { id: "Ca_17_94_18", block: "Ca", age: "17_94", difficulty: 9, question: "Marca el que NO pertenece al grupo: ________", options: ["supuesto", "premisa", "argumento", "conclusión"], correctIndex: 0 },
 { id: "Ca_17_94_19", block: "Ca", age: "17_94", difficulty: 9, question: "Marca el que NO pertenece al grupo: ________", options: ["certidumbre", "probabilidad", "varianza", "media"], correctIndex: 0 },
 { id: "Ca_17_94_20", block: "Ca", age: "17_94", difficulty: 9, question: "Marca el que NO pertenece al grupo: ________", options: ["enzima", "gen", "ADN", "cromosoma"], correctIndex: 0 },
-{ id: "Fi_3_5_01", block: "Fi", age: "3_5", difficulty: 1, question: "Perro, gato, pájaro. ¿Qué son todos?", options: ["Frutas", "Animales", "Vehículos", "Muebles"], correctIndex: 1 },
-{ id: "Fi_3_5_02", block: "Fi", age: "3_5", difficulty: 1, question: "Manzana, plátano, naranja. ¿Qué son?", options: ["Comida", "Ropa", "Frutas", "Juguetes"], correctIndex: 2 },
-{ id: "Fi_3_5_03", block: "Fi", age: "3_5", difficulty: 2, question: "Rojo, azul, verde. ¿Qué categoría es?", options: ["Colores", "Animales", "Meses", "Ropa"], correctIndex: 0 },
-{ id: "Fi_3_5_04", block: "Fi", age: "3_5", difficulty: 2, question: "Camisa, pantalón, abrigo. ¿Qué son?", options: ["Ropa", "Muebles", "Frutas", "Vehículos"], correctIndex: 0 },
-{ id: "Fi_3_5_05", block: "Fi", age: "3_5", difficulty: 3, question: "Leche, zumo, agua. ¿Qué son?", options: ["Postres", "Bebidas", "Helados", "Quesos"], correctIndex: 1 },
+{ id: "Fi_3_5_01", block: "Fi", age: "3_5", difficulty: 1, question: "Elige la opción que completa la matriz.", image: "img/fi/fi_3_5_01.png", options: ["A", "B", "C", "D"], correctIndex: 1 },
+{ id: "Fi_3_5_02", block: "Fi", age: "3_5", difficulty: 1, question: "Elige la opción que completa la matriz.", image: "img/fi/fi_3_5_01.png", options: ["A", "B", "C", "D"], correctIndex: 2 },
+{ id: "Fi_3_5_03", block: "Fi", age: "3_5", difficulty: 1, question: "Elige la opción que completa la matriz.", image: "img/fi/fi_3_5_01.png", options: ["A", "B", "C", "D"], correctIndex: 0 },
+{ id: "Fi_3_5_04", block: "Fi", age: "3_5", difficulty: 1, question: "Elige la opción que completa la matriz.", image: "img/fi/fi_3_5_01.png", options: ["A", "B", "C", "D"], correctIndex: 0 },
+{ id: "Fi_3_5_05", block: "Fi", age: "3_5", difficulty: 1, question: "Elige la opción que completa la matriz.", image: "img/fi/fi_3_5_01.png", options: ["A", "B", "C", "D"], correctIndex: 1 },
 { id: "Mv_3_5_01", block: "Mv", age: "3_5", difficulty: 1, question: "sol, luna, nube | ¿Cuál de estas palabras estaba en la lista?", options: ["estrella", "nube", "árbol", "flor"], correctIndex: 1 },
 { id: "Mv_3_5_02", block: "Mv", age: "3_5", difficulty: 1, question: "gato, perro, pez | ¿Qué animal iba en segundo lugar?", options: ["gato", "perro", "pez", "pájaro"], correctIndex: 1 },
 { id: "Mv_3_5_03", block: "Mv", age: "3_5", difficulty: 1, question: "rojo, azul, verde | ¿Cuál es la secuencia correcta?", options: ["rojo, azul, verde", "azul, verde, rojo", "verde, rojo, azul", "rojo, verde, azul"], correctIndex: 0 },
@@ -1253,7 +1253,37 @@
 		transform-origin: center;
 	  }
 	}
+	
+	    /* ===== Fi: Figuras Incompletas ===== */
+    .fi-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
 
+    .fi-img {
+	  width: 100%;
+	  max-width: 520px;      /* ✅ límite cómodo en PC */
+	  height: auto;
+	  border-radius: 12px;
+	  border: 1px solid #e5e7eb;
+	  background: #fff;
+	}
+
+    .fi-caption {
+      text-align: center;
+      font-size: 1rem;
+      line-height: 1.25;
+      padding: 0 12px;
+    }
+	
+	@media (max-width: 480px) {
+	  .fi-img {
+		max-width: 94vw;     /* casi todo el ancho en móvil */
+	  }
+}
 
   `;
   const style = document.createElement("style");
@@ -1515,9 +1545,15 @@ function renderAnswerPhase(q) {
   applyMnvLayout(selectedBlockId === "Mnv");
 
   // Pregunta
-  if (selectedBlockId === "Mnv") {
-    // En Mnv usamos textContent para evitar diferencias con espacios/saltos
+    if (selectedBlockId === "Mnv") {
     questionText.textContent = rawText;
+  } else if (selectedBlockId === "Fi" && q.image) {
+    questionText.innerHTML = `
+      <div class="fi-wrap">
+        <img class="fi-img" src="${q.image}" alt="Figura incompleta">
+        ${rawText ? `<div class="fi-caption">${formatMultiline(rawText)}</div>` : ""}
+      </div>
+    `;
   } else {
     questionText.innerHTML = formatMultiline(rawText);
   }
